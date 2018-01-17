@@ -23,28 +23,52 @@ body {background-color: #6897cd;}
 
 #login{
     float: top;
-    width: 250px;
+    width: 244px;
     height: 100px;
     border-style: solid;
     border-color: black;
+    background-color: white;
+}
+
+#loginHeader{
+        padding-top: 20px;
 }
 
 #signup{
-    width: 250px;
+    padding-bottom: 4px;
+    margin-top: 10px;
+    width: 244px;
     height: 280px;
     border-style: solid;
     border-color: black;
+    background-color: white;
+
+}
+#signupHeader
+{
+    padding-top: 20px;
+    padding-bottom: 15px;
+    text-align: center;
+    font-size: medium;
+    font-weight: bold;
 }
 
-form {
-    overflow: hidden;
+.single-field {
+    padding-top: 5px;
+    position: relative;
+    height: 20px;
 }
-input, select {
-    float: right;
-    clear: both;
-    width: 50%;
+
+label{
+    float: left;
 }
+input, select{
+    float : right;
+    width: 60%;
+}
+
 input[type=submit] {
+    margin-top: 5px;
     float: right;
     clear: both;
     width: auto ;
