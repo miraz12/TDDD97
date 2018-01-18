@@ -1,11 +1,20 @@
 var welcomeView;
-var loginView;
+var profileView;
+
+function loginClicked(){
+    console.log("Mordin");
+}
+
 
 displayView = function(){
  // the code required to display a view
     document.getElementById("body").innerHTML = welcomeView.innerHTML;
-
 };
+
+displayProfileView = function(){
+    document.getElementById("body").innerHTML = profileView.innerHTML;
+};
+
 window.onload = function(){
  //code that is executed as the page is loaded.
  //You shall put your own custom code here.
@@ -14,5 +23,6 @@ window.onload = function(){
 
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
+    profileView = document.getElementById("profileview");
     displayView();
 };
