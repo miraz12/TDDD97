@@ -12,11 +12,11 @@
                   <form >
                       <div class="single-field">
                           <label> Email:</label>
-                          <input type="text" name="inputEmail">
+                          <input type="text" name="inputEmail" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label> Password:</label>
-                          <input type="password" name="inputPassword">
+                          <input type="text" name="inputPassword" minlength=5 required>
                       </div>
                       <div>
                           <input type="submit" value="Login" onclick="loginClicked()">
@@ -30,15 +30,15 @@
                   <form>
                       <div class="single-field">
                           <label> First name: </label>
-                          <input type="text" name="Name" value="">
+                          <input type="text" name="Name" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label> Family name: </label>
-                          <input type="text" name="Family" value="">
+                          <input type="text" name="Family" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Gender:</label>
-                          <select id="gender" name="gender">
+                          <select id="gender" name="gender" required>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -46,23 +46,23 @@
                       </div>
                       <div class="single-field">
                           <label>City:</label>
-                          <input type="text" name="City" value="">
+                          <input type="text" name="City" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Country:</label>
-                          <input type="text" name="Country" value="">
+                          <input type="text" name="Country" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Email:</label>
-                          <input type="text" name="Email" value="">
+                          <input type="text" name="Email" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Password:</label>
-                          <input type="text" name="Password" value="">
+                          <input type="text" name="Password" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Repeat PSW:</label>
-                          <input type="text" name="Rpt Password" value="">
+                          <input type="text" name="Rpt Password" value="" minlength=5 required>
                       </div>
                       <input type="submit" value="SignUp">
                   </form>
