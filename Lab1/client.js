@@ -1,9 +1,10 @@
 var welcomeView;
 var profileView;
 
-function loginClicked(){
-    console.log("Mordin");
+loginClicked = function(){
+    console.log("login clicked");
 }
+
 
 
 displayView = function(){
