@@ -1,4 +1,5 @@
 var welcomeView;
+var loginView;
 
 displayView = function(){
  // the code required to display a view
