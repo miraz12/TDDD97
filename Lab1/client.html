@@ -27,7 +27,7 @@
                   <div id="signupHeader">
                       Sign up here
                   </div>
-                  <form>
+                  <form id="signupForm" action = "javascript:signUpClicked();">
                       <div class="single-field">
                           <label> First name: </label>
                           <input type="text" name="Name" value="" minlength=5 required>
@@ -38,7 +38,7 @@
                       </div>
                       <div class="single-field">
                           <label>Gender:</label>
-                          <select id="gender" name="gender" required>
+                          <select id="gender" name="Gender" required>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -62,7 +62,7 @@
                       </div>
                       <div class="single-field">
                           <label>Repeat PSW:</label>
-                          <input type="text" name="Rpt Password" value="" minlength=5 required>
+                          <input type="text" name="RptPassword" value="" minlength=5 required>
                       </div>
                       <input type="submit" value="SignUp">
                   </form>
