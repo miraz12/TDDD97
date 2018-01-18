@@ -50,7 +50,7 @@ signUpClicked = function () {
     var password = from.elements["Password"];
     var rptPassword = from.elements["RptPassword"];
 
-    if(password.value != rptPassword.value)
+    if(password.value !== rptPassword.value)
     {
         document.getElementById("singUp-error").innerHTML = "Passwords not matching!";
     }
