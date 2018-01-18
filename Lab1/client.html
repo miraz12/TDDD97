@@ -9,17 +9,17 @@
           <div id="forms">
               <div id="login">
                   <div id="loginHeader"></div>
-                  <form >
+                  <form id="loginForm" action="javascript:loginClicked();">
                       <div class="single-field">
                           <label> Email:</label>
-                          <input type="email" name="inputEmail" minlength=5 required>
+                          <input type="email" name="inputEmail" value="" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label> Password:</label>
-                          <input type="text" name="inputPassword" minlength=5 required>
+                          <input type="text" name="inputPassword" value="" minlength=5 required>
                       </div>
                       <div>
-                          <input type="submit" value="Login" onclick="loginClicked()">
+                          <input type="submit" value="Login">
                       </div>
                   </form>
               </div>

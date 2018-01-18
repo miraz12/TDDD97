@@ -1,8 +1,18 @@
 var welcomeView;
 var profileView;
+var token;
 
 loginClicked = function(){
-    console.log("login clicked");
+    var form = document.getElementById("loginForm");
+    var username = form.elements["inputEmail"].value;
+    var password = form.elements["inputPassword"].value;    
+    
+    var dataObj = {"username":username, "password":password};
+    var returnMessage = serverstub.signIn(dataObj);
+    token = returnMessage.data;
+
+    console.log(returnMessage.message); //TODO: where to display?
+    console.log("token is " + token);
 }
 
 
@@ -59,10 +69,6 @@ signUpClicked = function () {
         var returnMessage = serverstub.signUp(newUser);
 
     }
-
-
-
-
 
 
 }
