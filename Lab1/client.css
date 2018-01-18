@@ -1,0 +1,79 @@
+body {background-color: #6897cd;}
+
+#center {
+    margin: auto;
+    padding-top: 100px;
+    width: 600px;
+    height: 400px;
+}
+
+#logo {
+    float: left;
+    width: 340px;
+    height: 400px;
+    border-style: solid;
+    border-color: black;
+}
+
+#forms{
+    float: right;
+    width: 250px;
+    height: 400px;
+}
+
+#login{
+    float: top;
+    width: 244px;
+    height: 100px;
+    border-style: solid;
+    border-color: black;
+    background-color: white;
+}
+
+#loginHeader{
+        padding-top: 20px;
+}
+
+#signup{
+    padding-bottom: 4px;
+    margin-top: 10px;
+    width: 244px;
+    height: 280px;
+    border-style: solid;
+    border-color: black;
+    background-color: white;
+
+}
+#signupHeader
+{
+    padding-top: 20px;
+    padding-bottom: 15px;
+    text-align: center;
+    font-size: medium;
+    font-weight: bold;
+}
+
+.single-field {
+    padding-top: 5px;
+    padding-right: 2px;
+    padding-left: 2px;
+    position: relative;
+    height: 20px;
+}
+
+label{
+    float: left;
+}
+input, select{
+    float : right;
+    width: 60%;
+}
+
+input[type=submit] {
+    margin-top: 5px;
+    margin-right: 2px;
+    float: right;
+    clear: both;
+    width: auto ;
+}
+
