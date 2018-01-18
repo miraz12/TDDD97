@@ -5,14 +5,15 @@ var token;
 loginClicked = function(){
     var form = document.getElementById("loginForm");
     var username = form.elements["inputEmail"].value;
-    var password = form.elements["inputPassword"].value;    
+    var password = form.elements["inputPassword"].value;
     
-    var dataObj = {"username":username, "password":password};
-    var returnMessage = serverstub.signIn(dataObj);
+    var returnMessage = serverstub.signIn(username, password);
     token = returnMessage.data;
 
-    console.log(returnMessage.message); //TODO: where to display?
+    //console.log(returnMessage.message);
     console.log("token is " + token);
+    document.getElementById("singIn-error").innerHTML = returnMessage.message;
+
 }
 
 

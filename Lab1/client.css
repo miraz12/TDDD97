@@ -55,6 +55,10 @@ body {background-color: #6897cd;}
     float: left;
     font-size: small;
 }
+#singIn-error{
+    float: left;
+    font-size: small;
+}
 
 .single-field {
     padding-top: 5px;
