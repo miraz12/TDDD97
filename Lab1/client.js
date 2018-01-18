@@ -40,35 +40,32 @@ window.onload = function(){
 
 signUpClicked = function () {
     var from = document.getElementById("signupForm");
-    var name = from.elements["Name"].value;
-    var familyname = from.elements["Family"].value;
-    var gender = from.elements["Gender"].value;
-    var city = from.elements["City"].value;
-    var country = from.elements["Country"].value;
-    var email = from.elements["Email"].value;
-    var password = from.elements["Password"].value;
-    var rptPassword = from.elements["RptPassword"].value;
+    var name = from.elements["Name"];
+    var familyname = from.elements["Family"];
+    var gender = from.elements["Gender"];
+    var city = from.elements["City"];
+    var country = from.elements["Country"];
+    var email = from.elements["Email"];
+    var password = from.elements["Password"];
+    var rptPassword = from.elements["RptPassword"];
 
-    if(password != rptPassword)
+    if(password.value != rptPassword.value)
     {
-        //TODO: Display error in text instead of with alert.
-        window.alert("Not same password!");
+        document.getElementById("singUp-error").innerHTML = "Passwords not matching!";
     }
     else    //Signup
     {
         var newUser = {
-                "email":email,
-                "password":password,
-                "firstname":name,
-                "familyname":familyname,
-                "gender":gender,
-                "city":city,
-                "country":country
+                "email":email.value,
+                "password":password.value,
+                "firstname":name.value,
+                "familyname":familyname.value,
+                "gender":gender.value,
+                "city":city.value,
+                "country":country.value
         }
 
         var returnMessage = serverstub.signUp(newUser);
-
+        document.getElementById("singUp-error").innerHTML = returnMessage.message;
     }
-
-
 }

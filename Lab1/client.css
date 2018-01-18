@@ -44,13 +44,16 @@ body {background-color: #6897cd;}
     background-color: white;
 
 }
-#signupHeader
-{
+#signupHeader {
     padding-top: 20px;
     padding-bottom: 15px;
     text-align: center;
     font-size: medium;
     font-weight: bold;
+}
+#singUp-error{
+    float: left;
+    font-size: small;
 }
 
 .single-field {
