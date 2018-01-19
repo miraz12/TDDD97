@@ -14,10 +14,15 @@ loginClicked = function(){
     document.getElementById("singIn-error").innerHTML = returnMessage.message;
     if(returnMessage.success === true)
     {
-        document.getElementById("body").innerHTML = profileView.innerHTML;
         localStorage.setItem("token", token);
+        displayView();
     }
 
+}
+
+logoutClicked = function() {
+     localStorage.removeItem("token");
+     displayView();
 }
 
 
