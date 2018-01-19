@@ -1,6 +1,5 @@
 var welcomeView;
 var profileView;
-var token;
 
 loginClicked = function(){
     var form = document.getElementById("loginForm");
@@ -8,11 +7,16 @@ loginClicked = function(){
     var password = form.elements["inputPassword"].value;
     
     var returnMessage = serverstub.signIn(username, password);
-    token = returnMessage.data;
+    var token = returnMessage.data;
 
     //console.log(returnMessage.message);
-    console.log("token is " + token);
+    //console.log("token is " + token);
     document.getElementById("singIn-error").innerHTML = returnMessage.message;
+    if(returnMessage.success === true)
+    {
+        document.getElementById("body").innerHTML = profileView.innerHTML;
+        localStorage.setItem("token", token);
+    }
 
 }
 
@@ -20,7 +24,15 @@ loginClicked = function(){
 
 displayView = function(){
  // the code required to display a view
-    document.getElementById("body").innerHTML = welcomeView.innerHTML;
+    var token = localStorage.getItem("token");
+    if(token !== null)
+    {
+        document.getElementById("body").innerHTML = profileView.innerHTML;
+    }
+    else
+    {
+        document.getElementById("body").innerHTML = welcomeView.innerHTML;
+    }
 };
 
 displayProfileView = function(){
