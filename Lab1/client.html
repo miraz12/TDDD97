@@ -12,11 +12,11 @@
                   <form id="loginForm" action="javascript:loginClicked();">
                       <div class="single-field">
                           <label> Email:</label>
-                          <input type="text" name="inputEmail" required>
+                          <input type="email" name="inputEmail" required>
                       </div>
                       <div class="single-field">
                           <label> Password:</label>
-                          <input type="text" name="inputPassword" required>
+                          <input type="password" name="inputPassword" minlength=5 required>
                       </div>
                       <div>
                           <input type="submit" value="Login">
@@ -39,7 +39,7 @@
                       </div>
                       <div class="single-field">
                           <label>Gender:</label>
-                          <select id="Gender" name="Gender">
+                          <select id="gender" name="Gender" required>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -55,15 +55,15 @@
                       </div>
                       <div class="single-field">
                           <label>Email:</label>
-                          <input type="text" name="Email" value="" required>
+                          <input type="email" name="Email" required>
                       </div>
                       <div class="single-field">
                           <label>Password:</label>
-                          <input type="text" name="Password" value="" minlength=5 required>
+                          <input type="password" name="Password" minlength=5 required>
                       </div>
                       <div class="single-field">
                           <label>Repeat PSW:</label>
-                          <input type="text" name="RptPassword" value="" minlength=5 required>
+                          <input type="password" name="RptPassword"" minlength=5 required>
                       </div>
                       <input type="submit" value="SignUp">
                   </form>
