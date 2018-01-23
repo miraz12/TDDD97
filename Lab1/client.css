@@ -100,14 +100,6 @@ input[type=submit] {
     transition: 0.3s;
 }
 
-.tab button:hover {
-    background-color: #ddd;
-}
-
-.tab button.active {
-    background-color: #ccc;
-}
-
 .tabcontent {
     display: none;
     padding: 10px 10px;
@@ -115,17 +107,14 @@ input[type=submit] {
     border-top: none;
 }
 
-#postInput{
-    width: 400;
-    height: 200;
-}
-
 #postDiv{
     margin: auto;
     width: 50%;
+    resize: none;
 }
 
-#infoDiv {
+
+.infoDiv {
     float: left;
     width: 20%;
 }
@@ -135,7 +124,15 @@ input[type=submit] {
     height: 60%;
 }
 
-#postInput {
+.postInput {
     float: none;
     margin: auto;
+    resize: none;
+    width: 400;
+    height: 200;
+}
+
+.wallPosts{
+    margin: auto;
+    float: none;
 }
