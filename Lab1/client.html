@@ -79,7 +79,7 @@
         <button id="accountTabButton" class="tablinks" onclick="accountPressed()">Account</button>
     </div>
 
-    <div id="homeTab" name="Home" class="tabcontent"> 
+    <div id="homeTab" name="Home" class="tabcontent">
         <div id="myInfoDiv" class="infoDiv">
             <div id="firstName" class="single-field">
                 <label>Name: </label> 
@@ -114,55 +114,55 @@
             </form>
         </div>
 
-        <div id="wallDiv">
             <button id="refreshWallButton" onclick="refreshWallClicked()">Refresh wall</button>
             <div id="postsDiv"></div>
-        </div>
     </div>
 
-    <div id="browseTab" name="Browse" class="tabcontent"> 
-        <form id="searchUserForm" action="javascript:getUserPage();">
-            <input type="email" id="userSearch" placeholder="User..." value="" minlength=5 required>
-            <input type="submit" id="userSearchButton" value="Search">
-        </form>
-        <div id="searchUser-error" class="error"></div>
-        <div id="browseInfoDiv" class="infoDiv">
+    <div id="browseTab" name="Browse" class="tabcontent">
+    <div id="browseInfoDiv" class="infoDiv">
             <div id="browseFirstName" class="single-field">
-                <label>Name: </label> 
+                <label>Name: </label>
                 <label id="browseNameLabel">null</label>
             </div>
             <div id="browseFamilyName" class="single-field">
-                <label>Familyname: </label> 
+                <label>Familyname: </label>
                 <label id="browseFamilynameLabel">null</label>
             </div>
             <div id="browseEmail" class="single-field">
-                <label>Email: </label> 
-                <label id="browseEmailLabel">null</label>   
+                <label>Email: </label>
+                <label id="browseEmailLabel">null</label>
             </div>
             <div id="browseGender" class="single-field">
-                <label>Gender: </label> 
-                <label id="browseGenderLabel">null</label>       
+                <label>Gender: </label>
+                <label id="browseGenderLabel">null</label>
             </div>
             <div id="browseCity" class="single-field">
-                <label>City: </label> 
-                <label id="browseCityLabel">null</label>      
+                <label>City: </label>
+                <label id="browseCityLabel">null</label>
             </div>
             <div id="browseCountry" class="single-field">
-                <label>Country: </label> 
-                <label id="browseCountryLabel">null</label> 
+                <label>Country: </label>
+                <label id="browseCountryLabel">null</label>
             </div>
         </div>
-        <div id="postDiv">
-            <form id="postOnUserForm" action="javascript:postToUserClicked()">
-                <textarea type="text" id="postUserInput" class="postInput" value="" placeholder="Make a tweed..." required></textarea>
-                <input type="submit" value="PostText">
-            </form>
+        <div id="searchPost">
+            <div id="searchDiv">
+                <form id="searchUserForm" action="javascript:getUserPage();">
+                    <input type="email" id="userSearch" placeholder="User..." value="" minlength=5 required>
+                    <input type="submit" id="userSearchButton" value="Search">
+                </form>
+                <div id="searchUser-error" class="error"></div>
+            </div>
+            <div id="postDiv">
+                <form id="postOnUserForm" action="javascript:postToUserClicked()">
+                    <textarea type="text" id="postUserInput" class="postInput" value="" placeholder="Make a tweed..." required></textarea>
+                    <input type="submit" value="PostText">
+                </form>
+            </div>
+
         </div>
-    
-        <div id="wallDiv">
             <button id="refreshWallButton" onclick="refreshUserWallClicked()">Refresh wall</button>
             <div id="userPostsDiv"></div>
-        </div>
     </div>
 
     <div id="accountTab" name="Account" class="tabcontent">     
