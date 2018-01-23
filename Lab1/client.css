@@ -137,10 +137,11 @@ input[type=submit] {
 
 #searchPost{
     width: 50%;
-    float: left;
+    float: right;
 }
 
 #searchDiv{
-    float: left;
+    float: right;
     height: 20px;
+    width: 50%;
 }
