@@ -158,9 +158,9 @@ accountPressed = function(){
 changePasswordClicked = function(){
     //console.log("changePWPressed");
     var form = document.getElementById("changePasswordForm");
-    var password = form.elements["Password"];
-    var rptPassword = form.elements["RptPassword"];
-    var oldPassword = form.elements["oldPassword"];
+    var password = form.elements["Password"].value;
+    var rptPassword = form.elements["RptPassword"].value;
+    var oldPassword = form.elements["oldPassword"].value;
 
     if(password.value !== rptPassword.value)
     {
