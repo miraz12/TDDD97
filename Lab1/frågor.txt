@@ -1,0 +1,19 @@
+1. Reduce load on server = faster service
+
+2. Not that secure since it is in plain text. Get your token = login in as you.
+
+3. Not now since the innerText handles that
+
+4. We would get out from our page since it is a single page application. Handle it manually is a solution
+
+5. You get sent back to the start page of twidder. (The home page)
+
+6. It would put more load on the server whenever a new view is needed.
+
+7. Depending on the operation but probably. Convienient for the client-side to know if an operation isn't excecuted.
+
+8. It is good to be used in the way that the user (client-side) can only send data that are formated in a way that the server wants.
+
+9. There is no need to represent data in the form of a table? More freedom of just using ordinary css.
+
+10. You can make them smooth like any program and only load what is needed at the time depending on the state of the program.
