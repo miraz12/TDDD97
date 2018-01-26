@@ -34,12 +34,12 @@ logoutClicked = function() {
 
 loadPersonalInfo = function(){
     //console.log(userInfo);
-    document.getElementById("nameLabel").innerHTML = userInfo.firstname;
-    document.getElementById("familynameLabel").innerHTML = userInfo.familyname;
-    document.getElementById("emailLabel").innerHTML = userInfo.email;
-    document.getElementById("genderLabel").innerHTML = userInfo.gender;
-    document.getElementById("cityLabel").innerHTML = userInfo.city;
-    document.getElementById("countryLabel").innerHTML = userInfo.country;
+    document.getElementById("nameLabel").innerText = userInfo.firstname;
+    document.getElementById("familynameLabel").innerText = userInfo.familyname;
+    document.getElementById("emailLabel").innerText = userInfo.email;
+    document.getElementById("genderLabel").innerText = userInfo.gender;
+    document.getElementById("cityLabel").innerText = userInfo.city;
+    document.getElementById("countryLabel").innerText = userInfo.country;
 }
 
 
@@ -135,7 +135,7 @@ openTab = function(tab){
         document.getElementById("homeTabButton").style.backgroundColor = "#ccc";
     }
     else if(tab === "browseTab"){
-        document.getElementById("browseEmailLabel").innerHTML = "null";
+        document.getElementById("browseEmailLabel").innerText = "null";
         document.getElementById("browseTab").style.display = "block";
         document.getElementById("browseTabButton").style.backgroundColor = "#ccc";
     }
@@ -193,7 +193,10 @@ refreshWallClicked = function(){
     var wallDiv = document.getElementById("postsDiv");
     wallDiv.innerHTML = "";
     for(var i = 0; i < posts.length; i++){
-        wallDiv.innerHTML += "<div class=\"wallPosts\">" + posts[i].writer + ": " + posts[i].content + "</div>";
+        var tmpDiv = document.createElement("div");
+        tmpDiv.setAttribute("class", "wallPosts");
+        tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;            
+        wallDiv.appendChild(tmpDiv);
     }
 }
 
@@ -221,12 +224,12 @@ getUserPage = function(){
     else{
         //console.log(returnMessage.data);  
         var userData = returnMessage.data;
-        document.getElementById("browseNameLabel").innerHTML = userData.firstname;
-        document.getElementById("browseFamilynameLabel").innerHTML = userData.familyname;
-        document.getElementById("browseEmailLabel").innerHTML = userData.email;
-        document.getElementById("browseGenderLabel").innerHTML = userData.gender;
-        document.getElementById("browseCityLabel").innerHTML = userData.city;
-        document.getElementById("browseCountryLabel").innerHTML = userData.country;        
+        document.getElementById("browseNameLabel").innerText = userData.firstname;
+        document.getElementById("browseFamilynameLabel").innerText = userData.familyname;
+        document.getElementById("browseEmailLabel").innerText = userData.email;
+        document.getElementById("browseGenderLabel").innerText = userData.gender;
+        document.getElementById("browseCityLabel").innerText = userData.city;
+        document.getElementById("browseCountryLabel").innerText = userData.country;        
     }
 }
 
@@ -236,7 +239,7 @@ postToUserClicked = function(){
     document.getElementById("postUserInput").value = ""; //Clear textarea
     //console.log(text);
     
-    var userEmail = document.getElementById("browseEmailLabel").innerHTML;
+    var userEmail = document.getElementById("browseEmailLabel").innerText;
     var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userEmail);
     refreshUserWallClicked(); //Not clicked but still reused
     //console.log(retM.message);
@@ -244,22 +247,21 @@ postToUserClicked = function(){
 
 refreshUserWallClicked = function(){
     //console.log("refresh user wall clicked");
-    var userEmail = document.getElementById("browseEmailLabel").innerHTML;
+    var userEmail = document.getElementById("browseEmailLabel").innerText;
     if(userEmail === "null"){ //Comparing against content of the div tag is maybe not that good (since we shouldn't display "null" in the first place)
         document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output 
     }
     else{
         var posts = serverstub.getUserMessagesByEmail(localStorage.getItem("token"),userEmail).data;
         //console.log(posts);
-        
+
         var wallDiv = document.getElementById("userPostsDiv");
         wallDiv.innerHTML = "";
         for(var i = 0; i < posts.length; i++){
-            wallDiv.innerHTML += "<div class=\"wallPosts\">" + posts[i].writer + ": " + posts[i].content + "</div>";
-
-            //document.text
-            //innerText
-            //Login on signup
+            var tmpDiv = document.createElement("div");
+            tmpDiv.setAttribute("class", "wallPosts");    
+            tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;            
+            wallDiv.appendChild(tmpDiv);
         }
     }    
 }
