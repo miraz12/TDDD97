@@ -246,6 +246,10 @@ refreshUserWallClicked = function(){
         wallDiv.innerHTML = "";
         for(var i = 0; i < posts.length; i++){
             wallDiv.innerHTML += "<div class=\"wallPosts\">" + posts[i].writer + ": " + posts[i].content + "</div>";
+
+            //document.text
+            //innerText
+            //Login on signup
         }
     }    
 }
