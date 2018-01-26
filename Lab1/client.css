@@ -134,6 +134,7 @@ input[type=submit] {
 .wallPosts{
     margin-top: 10px;
     float: none;
+    text-align: left;
 }
 
 #searchPost{
@@ -145,4 +146,18 @@ input[type=submit] {
     float: right;
     height: 20px;
     width: 50%;
+}
+
+#postDiv{
+    margin-top: 10px;   
+}
+
+#userPostsDiv{
+    width: 50%;
+    float: right;
+}
+
+#postsDiv{
+    width: 50%;
+    float: right;
 }
