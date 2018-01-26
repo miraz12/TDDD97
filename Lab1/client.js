@@ -104,6 +104,15 @@ signUpClicked = function () {
 
         var returnMessage = serverstub.signUp(newUser);
         document.getElementById("singUp-error").innerHTML = returnMessage.message;
+
+        var returnMessage = serverstub.signIn(newUser.email, newUser.password);
+        
+        console.log(returnMessage);
+        if(returnMessage.success === true)
+        {
+            localStorage.setItem("token", returnMessage.data);
+            displayView();
+        }
     }
 }
 
@@ -194,6 +203,7 @@ postClicked = function(){
     document.getElementById("postInput").value = ""; //Clear textarea
     //console.log(text);    
     var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userInfo.email);
+    refreshWallClicked();
     //console.log(retM.message);
 
 }
