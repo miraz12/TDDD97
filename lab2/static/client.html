@@ -1,0 +1,196 @@
+<html>
+ <head>
+ <link href="static/client.css" type="text/css" rel="stylesheet">
+ <script type="text/view" id="welcomeview">
+  <div id="center">
+          <div id="logo">
+              <img src="static/wimage.png" alt="Login image">
+          </div>
+          <div id="forms">
+              <div id="login">
+                  <div id="loginHeader"></div>
+                  <form id="loginForm" action="javascript:loginClicked();">
+                      <div class="single-field">
+                          <label> Email:</label>
+                          <input type="email" name="inputEmail" required>
+                      </div>
+                      <div class="single-field">
+                          <label> Password:</label>
+                          <input type="password" name="inputPassword" minlength=5 required>
+                      </div>
+                      <div>
+                          <input type="submit" value="Login">
+                      </div>
+                  </form>
+                  <div id = "singIn-error" class = "singIn-error"></div>
+              </div>
+              <div id="signup">
+                  <div id="signupHeader">
+                      Sign up here
+                  </div>
+                  <form id="signupForm" action="javascript:signUpClicked();">
+                      <div class="single-field">
+                          <label> First name: </label>
+                          <input type="text" name="Name" value="" required>
+                      </div>
+                      <div class="single-field">
+                          <label> Family name: </label>
+                          <input type="text" name="Family" value="" required>
+                      </div>
+                      <div class="single-field">
+                          <label>Gender:</label>
+                          <select id="gender" name="Gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                          </select>
+                      </div>
+                      <div class="single-field">
+                          <label>City:</label>
+                          <input type="text" name="City" value="" required>
+                      </div>
+                      <div class="single-field">
+                          <label>Country:</label>
+                          <input type="text" name="Country" value="" required>
+                      </div>
+                      <div class="single-field">
+                          <label>Email:</label>
+                          <input type="email" name="Email" required>
+                      </div>
+                      <div class="single-field">
+                          <label>Password:</label>
+                          <input type="password" name="Password" minlength=5 required>
+                      </div>
+                      <div class="single-field">
+                          <label>Repeat PSW:</label>
+                          <input type="password" name="RptPassword"" minlength=5 required>
+                      </div>
+                      <input type="submit" value="SignUp">
+                  </form>
+                  <div id = "singUp-error" class = "singUp-error"></div>
+              </div>
+      </div>
+  </div>
+ </script>
+ <script type="text/view" id="profileview">
+    <div class="tab">
+        <button id="homeTabButton" class="tablinks" onclick="homePressed()">Home</button>
+        <button id="browseTabButton" class="tablinks" onclick="browsePressed()">Browse</button>
+        <button id="accountTabButton" class="tablinks" onclick="accountPressed()">Account</button>
+    </div>
+
+    <div id="homeTab" name="Home" class="tabcontent">
+        <div id="myInfoDiv" class="infoDiv">
+            <div id="firstName" class="single-field">
+                <label>Name: </label> 
+                <label id="nameLabel">null</label>
+            </div>
+            <div id="familyName" class="single-field">
+                <label>Familyname: </label> 
+                <label id="familynameLabel">null </label>
+            </div>
+            <div id="email" class="single-field">
+                <label>Email: </label> 
+                <label id="emailLabel">null </label>   
+            </div>
+            <div id="gender" class="single-field">
+                <label>Gender: </label> 
+                <label id="genderLabel">null </label>       
+            </div>
+            <div id="city" class="single-field">
+                <label>City: </label> 
+                <label id="cityLabel">null </label>      
+            </div>
+            <div id="country" class="single-field">
+                <label>Country: </label> 
+                <label id="countryLabel">null </label> 
+            </div>
+        </div>
+
+        <div id="postDiv">
+            <form id="postForm" action="javascript:postClicked()">
+                <textarea type="text" id="postInput" class="postInput" value="" placeholder="Make a tweed..." required></textarea>
+                <input type="submit" value="PostText">
+            </form>
+        </div>
+
+            <button id="refreshWallButton" onclick="refreshWallClicked()">Refresh wall</button>
+            <div id="postsDiv"></div>
+    </div>
+
+    <div id="browseTab" name="Browse" class="tabcontent">
+    <div id="browseInfoDiv" class="infoDiv">
+            <div id="browseFirstName" class="single-field">
+                <label>Name: </label>
+                <label id="browseNameLabel">null</label>
+            </div>
+            <div id="browseFamilyName" class="single-field">
+                <label>Familyname: </label>
+                <label id="browseFamilynameLabel">null</label>
+            </div>
+            <div id="browseEmail" class="single-field">
+                <label>Email: </label>
+                <label id="browseEmailLabel">null</label>
+            </div>
+            <div id="browseGender" class="single-field">
+                <label>Gender: </label>
+                <label id="browseGenderLabel">null</label>
+            </div>
+            <div id="browseCity" class="single-field">
+                <label>City: </label>
+                <label id="browseCityLabel">null</label>
+            </div>
+            <div id="browseCountry" class="single-field">
+                <label>Country: </label>
+                <label id="browseCountryLabel">null</label>
+            </div>
+        </div>
+        <div id="searchPost">
+            <div id="searchDiv">
+                <form id="searchUserForm" action="javascript:getUserPage();">
+                    <input type="email" id="userSearch" placeholder="User..." value="" minlength=5 required>
+                    <input type="submit" id="userSearchButton" value="Search">
+                </form>
+                <div id="searchUser-error" class="error"></div>
+            </div>
+            <div id="postDiv">
+                <form id="postOnUserForm" action="javascript:postToUserClicked()">
+                    <textarea type="text" id="postUserInput" class="postInput" value="" placeholder="Make a tweed..." required></textarea>
+                    <input type="submit" value="PostText">
+                </form>
+            </div>
+
+        </div>
+            <button id="refreshWallButton" onclick="refreshUserWallClicked()">Refresh wall</button>
+            <div id="userPostsDiv"></div>
+    </div>
+
+    <div id="accountTab" name="Account" class="tabcontent">     
+        <form id="changePasswordForm" action="javascript:changePasswordClicked();">
+            <div class="single-field">
+                <label>Password:</label>
+                <input type="text" name="Password" value="" minlength=5 required>
+            </div>
+            <div class="single-field">
+                <label>Repeat Password:</label>
+                <input type="text" name="RptPassword" value="" minlength=5 required>
+            </div>
+            <div class="single-field">
+                <label>Old Password:</label>
+                <input type="text" name="oldPassword" value="" minlength=5 required>
+            </div>
+            <div>
+                <input type="submit" value="Confirm">
+            </div>
+            <div id="changePW-error" class="error"></div>
+        </form>
+        <button id="logoutButton" onclick="logoutClicked()">Logout</button>
+    </div>
+ </script>
+
+ <script src="static/client.js" type="text/javascript"></script>
+ <script src="static/serverstub.js" type="text/javascript"></script>
+ </head>
+ <body id ="body">
+ </body>
+</html>
