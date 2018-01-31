@@ -11,20 +11,30 @@ loginClicked = function(){
     var form = document.getElementById("loginForm");
     var username = form.elements["inputEmail"].value;
     var password = form.elements["inputPassword"].value;
-    
-    var returnMessage = serverstub.signIn(username, password);
-    var token = returnMessage.data;
 
-    
-    //console.log(returnMessage.message);
-    //console.log("token is " + token);
-    document.getElementById("singIn-error").innerHTML = returnMessage.message;
-    if(returnMessage.success === true)
-    {
-        localStorage.setItem("token", token);
-        displayView();
-    }
 
+     var xmlhttp = new XMLHttpRequest();
+     xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+
+            var returnMessage = JSON.parse(xmlhttp.responseText);
+            var token = returnMessage.data;
+
+
+            if(returnMessage.success === true)
+            {
+                localStorage.setItem("token", token);
+                displayView();
+            }
+            else
+            {
+                document.getElementById("singIn-error").innerHTML = "Wrong username or password";
+            }
+        }
+     }
+     var formData = new FormData( document.getElementById("loginForm"));
+     xmlhttp.open("POST", "/sign-in");
+     xmlhttp.send(formData);
 }
 
 logoutClicked = function() {
@@ -121,7 +131,7 @@ signUpClicked = function () {
             }
         }
         var formData = new FormData( document.getElementById("signupForm"));
-        xmlhttp.open("POST", "/signup");
+        xmlhttp.open("POST", "/sign-up");
         xmlhttp.send(formData);
 
     }
