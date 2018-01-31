@@ -93,27 +93,40 @@ signUpClicked = function () {
     else    //Signup
     {
         var newUser = {
-                "email":email.value,
-                "password":password.value,
-                "firstname":name.value,
-                "familyname":familyname.value,
-                "gender":gender.value,
-                "city":city.value,
-                "country":country.value
+            "email": email.value,
+            "password": password.value,
+            "firstname": name.value,
+            "familyname": familyname.value,
+            "gender": gender.value,
+            "city": city.value,
+            "country": country.value
         }
 
-        var returnMessage = serverstub.signUp(newUser);
-        document.getElementById("singUp-error").innerHTML = returnMessage.message;
 
-        var returnMessage = serverstub.signIn(newUser.email, newUser.password);
-        
-        console.log(returnMessage);
-        if(returnMessage.success === true)
-        {
-            localStorage.setItem("token", returnMessage.data);
-            displayView();
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function (ev) {
+            if (xmlhttp.readyState === 4 && this.status === 200) {
+                var returnMessage = JSON.parse(xmlhttp.responseText);
+                document.getElementById("singUp-error").innerHTML = returnMessage.message;
+                if(returnMessage.success === true)
+                {
+                    returnMessage = serverstub.signIn(email, password);
+                    console.log(returnMessage);
+                    if(returnMessage.success === true)
+                    {
+                       localStorage.setItem("token", returnMessage.data);
+                       displayView();
+                    }
+                }
+            }
         }
+        var formData = new FormData( document.getElementById("signupForm"));
+        xmlhttp.open("POST", "/signup");
+        xmlhttp.send(formData);
+
     }
+
+
 }
 
 openTab = function(tab){
