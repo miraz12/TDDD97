@@ -59,9 +59,9 @@ def login():
 
     if result:
         token = binascii.b2a_hex(os.urandom(32))
-        return jsonify({"success": True, "data": token})
+        return jsonify({"success": True, "message": "Login successful", "data": token})
     else:
-        return jsonify({"success": False, "data": ""})
+        return jsonify({"success": False, "message": "Wrong e-mail or password", "data": ""})
 
 
 if __name__ == '__main__':

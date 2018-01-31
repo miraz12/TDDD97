@@ -28,7 +28,7 @@ loginClicked = function(){
             }
             else
             {
-                document.getElementById("singIn-error").innerHTML = "Wrong username or password";
+                document.getElementById("singIn-error").innerHTML = returnMessage.message;
             }
         }
      }
