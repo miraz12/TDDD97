@@ -83,8 +83,16 @@ def fetch_user_token(token):
     if email is None:
         return jsonify({"success": False, "message": "No such token."})
     else:
-        user = database_helper.fetch_account_data(email)
+        return fetch_user_email(email)
+
+
+@app.route('/fetch-user-email/<email>', methods=['GET'])
+def fetch_user_email(email):
+    user = database_helper.fetch_account_data(email)
+    if user:
         return jsonify({"success": True, "message": "Retrieved email successfully.", "data": user})
+    else:
+        return jsonify({"success": False, "message": "No such user"})
 
 
 @app.route('/change-password', methods=['POST'])

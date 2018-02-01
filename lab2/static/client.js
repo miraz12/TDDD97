@@ -87,7 +87,6 @@ displayView = function(){
         }}
 
         xmlhttp.open("GET", "/fetch-user-token/"+token);
-        xmlhttp.setRequestHeader("Content-Type", "application/json;");
         xmlhttp.send();
 
     }
@@ -264,25 +263,30 @@ postClicked = function(){
 }
 
 getUserPage = function(){
-    var returnMessage = serverstub.getUserDataByEmail(localStorage.getItem("token"), document.getElementById("userSearch").value);
-    document.getElementById("searchUser-error").innerHTML = "";
-    //console.log("user search clicked");
-    
+    var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+            var returnMessage = JSON.parse(xmlhttp.responseText);
 
-    if(returnMessage.success === false){
-        document.getElementById("searchUser-error").innerHTML = returnMessage.message;
-        //console.log("error here");
-    }
-    else{
-        //console.log(returnMessage.data);  
-        var userData = returnMessage.data;
-        document.getElementById("browseNameLabel").innerText = userData.firstname;
-        document.getElementById("browseFamilynameLabel").innerText = userData.familyname;
-        document.getElementById("browseEmailLabel").innerText = userData.email;
-        document.getElementById("browseGenderLabel").innerText = userData.gender;
-        document.getElementById("browseCityLabel").innerText = userData.city;
-        document.getElementById("browseCountryLabel").innerText = userData.country;        
-    }
+            document.getElementById("searchUser-error").innerHTML = "";
+
+            if(returnMessage.success === false){
+                    document.getElementById("searchUser-error").innerHTML = returnMessage.message;
+                    //console.log("error here");
+            }
+            else{
+                //console.log(returnMessage.data);
+                var userData = returnMessage.data;
+                document.getElementById("browseEmailLabel").innerText = userData[0];
+                document.getElementById("browseNameLabel").innerText = userData[2];
+                document.getElementById("browseFamilynameLabel").innerText = userData[3];
+                document.getElementById("browseGenderLabel").innerText = userData[4];
+                document.getElementById("browseCityLabel").innerText = userData[5];
+                document.getElementById("browseCountryLabel").innerText = userData[6];
+            }
+        }}
+        xmlhttp.open("GET", "/fetch-user-email/"+document.getElementById("userSearch").value);
+        xmlhttp.send();
 }
 
 postToUserClicked = function(){
