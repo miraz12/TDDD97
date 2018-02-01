@@ -44,23 +44,24 @@ logoutClicked = function() {
         var returnMessage = JSON.parse(xmlhttp.responseText);
         if(returnMessage.success === true){
             localStorage.removeItem("token");
-            displayView();
         }
     }}
 
-    xmlhttp.open("POST", "/sign-out", true);
+    xmlhttp.open("POST", "/sign-out");
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
     xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token")}));
+    displayView();
+
 }
 
 loadPersonalInfo = function(){
     //console.log(userInfo);
-    document.getElementById("nameLabel").innerText = userInfo.firstname;
-    document.getElementById("familynameLabel").innerText = userInfo.familyname;
-    document.getElementById("emailLabel").innerText = userInfo.email;
-    document.getElementById("genderLabel").innerText = userInfo.gender;
-    document.getElementById("cityLabel").innerText = userInfo.city;
-    document.getElementById("countryLabel").innerText = userInfo.country;
+    document.getElementById("emailLabel").innerText = userInfo[0];
+    document.getElementById("nameLabel").innerText = userInfo[2];
+    document.getElementById("familynameLabel").innerText = userInfo[3];
+    document.getElementById("genderLabel").innerText = userInfo[4];
+    document.getElementById("cityLabel").innerText = userInfo[5];
+    document.getElementById("countryLabel").innerText = userInfo[6];
 }
 
 
@@ -69,9 +70,26 @@ displayView = function(){
     var token = localStorage.getItem("token");
     if(token !== null)
     {
-        document.getElementById("body").innerHTML = profileView.innerHTML;
-        userInfo = serverstub.getUserDataByToken(localStorage.getItem("token")).data;
-        openTab("homeTab"); //Hard code is best code
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+            var returnMessage = JSON.parse(xmlhttp.responseText);
+            if(returnMessage.success === true){
+
+                document.getElementById("body").innerHTML = profileView.innerHTML;
+                userInfo = returnMessage.data;
+                openTab("homeTab"); //Hard code is best code
+            }
+            else{
+                localStorage.removeItem("token");
+                document.getElementById("body").innerHTML = welcomeView.innerHTML;
+            }
+        }}
+
+        xmlhttp.open("GET", "/fetch-user-token/"+token);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;");
+        xmlhttp.send();
+
     }
     else
     {
@@ -239,7 +257,7 @@ postClicked = function(){
     var text = document.getElementById("postInput").value;
     document.getElementById("postInput").value = ""; //Clear textarea
     //console.log(text);    
-    var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userInfo.email);
+    var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userInfo[0]);
     refreshWallClicked();
     //console.log(retM.message);
 

@@ -44,3 +44,11 @@ def fetch_account(email, password):
         return True
     else:
         return False
+
+
+def fetch_account_data(email):
+    user = query_db('SELECT  * FROM accounts WHERE email = ?', [email], one=True)
+    if user is None:
+        return False
+    else:
+        return user

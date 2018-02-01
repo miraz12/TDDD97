@@ -77,6 +77,16 @@ def signout():
         return jsonify({"success": False, "message": "You are not signed in."})
 
 
+@app.route('/fetch-user-token/<token>', methods=['GET'])
+def fetch_user_token(token):
+    email = loggedInUsers.get(token)
+    if email is None:
+        return jsonify({"success": False, "message": "No such token."})
+    else:
+        user = database_helper.fetch_account_data(email)
+        return jsonify({"success": True, "message": "Retrieved email successfully.", "data": user})
+
+
 if __name__ == '__main__':
     app.run()
 
