@@ -226,33 +226,16 @@ changePasswordClicked = function(){
 
             if(returnMessage.success === false)
             {
-                document.getElementById("singIn-error").innerHTML = returnMessage.message;
+                document.getElementById("changePW-error").innerHTML = returnMessage.message;
             }
         }
      }
 
-    var formData = new FormData( document.getElementById("changePasswordForm"));
-    formData.append("Email", userInfo.email);
+    var formD = new FormData(document.getElementById("changePasswordForm"));
+    formD.append("Email", userInfo[0]);
     xmlhttp.open("POST", "/change-password");
-    xmlhttp.send(formData);
+    xmlhttp.send(formD);
 
-    // var form = document.getElementById("changePasswordForm");
-    // var password = form.elements["Password"].value;
-    // var rptPassword = form.elements["RptPassword"].value;
-    // var oldPassword = form.elements["oldPassword"].value;
-    //
-    // if(password.value !== rptPassword.value)
-    // {
-    //     //console.log("Error, passwords doesn't match");
-    //     document.getElementById("changePW-error").innerHTML = "Error, passwords doesn't match";
-    //
-    // }
-    // else{
-    //     var returnMessage = serverstub.changePassword(localStorage.getItem("token"), oldPassword, password);
-    //     //console.log(returnMessage);
-    //     document.getElementById("changePW-error").innerHTML = returnMessage.message; //DETTA ÄR KNAS MEN DET FUNKAR (fel return message)
-    //
-    // }
 }
 
 refreshWallClicked = function(){
