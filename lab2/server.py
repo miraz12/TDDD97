@@ -115,6 +115,28 @@ def change_password():
     else:
         return jsonify({"success": False, "message": "Could not change password", "data": ""}) #TODO: better output
 
+
+@app.route('/fetch-messages-token/<token>', methods=['GET'])
+def fetch_messages_token(token):
+    email = loggedInUsers.get(token)
+
+    if email is None:
+        return jsonify({"success": False, "message": "Not logged in."})
+    else:
+        return fetch_messages_token(email)
+
+
+@app.route('/fetch-messages-email/<email>', methods=['GET'])
+def fetch_messages_email(email):
+
+    messages = database_helper.fetch_messages_by_email(email)
+
+    if messages is None:
+        return jsonify({"success": False, "message": "No messages."})
+    else:
+        return jsonify({"success": True, "message": "Retrieved messages", "data": messages})
+
+
 if __name__ == '__main__':
     app.run()
 

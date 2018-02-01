@@ -54,6 +54,14 @@ def fetch_account_data(email):
         return user
 
 
+def fetch_messages_by_email(email):
+    user = query_db('SELECT  * FROM messages WHERE receiver = ?', [email])
+    if user is None:
+        return False
+    else:
+        return user
+
+
 def change_password(email, password): #password = newpassword
     try:
         query_db('UPDATE accounts SET password=? WHERE email=?', [password, email])

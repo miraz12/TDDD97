@@ -242,15 +242,27 @@ refreshWallClicked = function(){
     //console.log("refresh wall clicked");
     var posts = serverstub.getUserMessagesByToken(localStorage.getItem("token")).data;
     //console.log(posts);
-    
-    var wallDiv = document.getElementById("postsDiv");
-    wallDiv.innerHTML = "";
-    for(var i = 0; i < posts.length; i++){
-        var tmpDiv = document.createElement("div");
-        tmpDiv.setAttribute("class", "wallPosts");
-        tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;            
-        wallDiv.appendChild(tmpDiv);
-    }
+
+    var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+            var returnMessage = JSON.parse(xmlhttp.responseText);
+            if(returnMessage.success)
+            {
+                posts = returnMessage.data;
+                var wallDiv = document.getElementById("postsDiv");
+                wallDiv.innerHTML = "";
+                for(var i = 0; i < posts.length; i++){
+                    var tmpDiv = document.createElement("div");
+                    tmpDiv.setAttribute("class", "wallPosts");
+                    tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;
+                    wallDiv.appendChild(tmpDiv);
+                }
+            }
+
+        }}
+        xmlhttp.open("GET", "/fetch-messages-token/"+localStorage.getItem("token"));
+        xmlhttp.send();
 }
 
 postClicked = function(){
@@ -310,16 +322,22 @@ refreshUserWallClicked = function(){
         document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output 
     }
     else{
-        var posts = serverstub.getUserMessagesByEmail(localStorage.getItem("token"),userEmail).data;
-        //console.log(posts);
 
-        var wallDiv = document.getElementById("userPostsDiv");
-        wallDiv.innerHTML = "";
-        for(var i = 0; i < posts.length; i++){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+            var returnMessage = JSON.parse(xmlhttp.responseText);
+            posts = returnMessage.data;
+            var wallDiv = document.getElementById("userPostsDiv");
+            wallDiv.innerHTML = "";
+            for(var i = 0; i < posts.length; i++){
             var tmpDiv = document.createElement("div");
-            tmpDiv.setAttribute("class", "wallPosts");    
-            tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;            
+            tmpDiv.setAttribute("class", "wallPosts");
+            tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;
             wallDiv.appendChild(tmpDiv);
         }
-    }    
+        }}
+        xmlhttp.open("GET", "/fetch-messages-email/"+userEmail);
+        xmlhttp.send();
+    }
 }
