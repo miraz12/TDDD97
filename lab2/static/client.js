@@ -240,8 +240,9 @@ changePasswordClicked = function(){
 
 refreshWallClicked = function(){
     //console.log("refresh wall clicked");
-    var posts = serverstub.getUserMessagesByToken(localStorage.getItem("token")).data;
+    //var posts = serverstub.getUserMessagesByToken(localStorage.getItem("token")).data;
     //console.log(posts);
+    var token = localStorage.getItem("token");
 
     var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
@@ -249,7 +250,7 @@ refreshWallClicked = function(){
             var returnMessage = JSON.parse(xmlhttp.responseText);
             if(returnMessage.success)
             {
-                posts = returnMessage.data;
+                var posts = returnMessage.data;
                 var wallDiv = document.getElementById("postsDiv");
                 wallDiv.innerHTML = "";
                 for(var i = 0; i < posts.length; i++){
@@ -261,7 +262,7 @@ refreshWallClicked = function(){
             }
 
         }}
-        xmlhttp.open("GET", "/fetch-messages-token/"+localStorage.getItem("token"));
+        xmlhttp.open("GET", "/fetch-messages-token/"+token);
         xmlhttp.send();
 }
 

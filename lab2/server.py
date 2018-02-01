@@ -118,11 +118,11 @@ def change_password():
 
 @app.route('/fetch-messages-token/<token>', methods=['GET'])
 def fetch_messages_token(token):
-    if token in loggedInUsers:
-        email = loggedInUsers.get(token)
-        return fetch_messages_token(email)
+    email = loggedInUsers.get(token)
+    if email is None:
+        return jsonify({"success": False, "message": "No such token."})
     else:
-        return jsonify({"success": False, "message": "Not logged in."})
+        return fetch_messages_email(email)
 
 
 @app.route('/fetch-messages-email/<email>', methods=['GET'])
