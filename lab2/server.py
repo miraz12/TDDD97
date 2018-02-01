@@ -64,6 +64,27 @@ def login():
         return jsonify({"success": False, "message": "Wrong e-mail or password", "data": ""})
 
 
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    email = request.form['inputEmail']
+    password = request.form['inputPassword']
+    rptNewPassword = request.form['inputRptNewPassword']
+    newPassword = request.form['inputNewPassword']
+
+    if(newPassword != rptNewPassword):
+        return jsonify({"success": False, "message": "New passwords doesn't match", "data": ""})
+
+    result = database_helper.fetch_account(email, password)
+    if not result:
+        return jsonify({"success": False, "message": "Wrong password", "data": ""})
+
+    result = database_helper.change_password(email, newPassword)
+    if result:
+        return jsonify({"success": True, "message": "Password successfully changed", "data": ""})
+    else:
+        return jsonify({"success": False, "message": "Could not change password", "data": ""}) #TODO: better output
+
+
 if __name__ == '__main__':
     app.run()
 

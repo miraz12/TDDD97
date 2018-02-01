@@ -44,3 +44,11 @@ def fetch_account(email, password):
         return True
     else:
         return False
+
+def change_password(email, password): #password = newpassword
+    try:
+        query_db('UPDATE accounts SET password=? WHERE email=?', [password, email])
+        get_db().commit()
+        return True
+    except:
+        return False
