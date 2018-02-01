@@ -118,12 +118,11 @@ def change_password():
 
 @app.route('/fetch-messages-token/<token>', methods=['GET'])
 def fetch_messages_token(token):
-    email = loggedInUsers.get(token)
-
-    if email is None:
-        return jsonify({"success": False, "message": "Not logged in."})
-    else:
+    if token in loggedInUsers:
+        email = loggedInUsers.get(token)
         return fetch_messages_token(email)
+    else:
+        return jsonify({"success": False, "message": "Not logged in."})
 
 
 @app.route('/fetch-messages-email/<email>', methods=['GET'])
@@ -135,6 +134,17 @@ def fetch_messages_email(email):
         return jsonify({"success": False, "message": "No messages."})
     else:
         return jsonify({"success": True, "message": "Retrieved messages", "data": messages})
+
+
+@app.route('/add-message', methods=['POST'])
+def post_message():
+    token = request.json['token']
+    message = request.json['message']
+    reciever = request.json['email']
+    sender = loggedInUsers.get(token)
+    database_helper.add_message(sender, reciever, message)
+
+    return jsonify({"success": True, "message": "Added message."})
 
 
 if __name__ == '__main__':

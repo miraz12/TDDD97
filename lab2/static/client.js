@@ -271,6 +271,19 @@ postClicked = function(){
     document.getElementById("postInput").value = ""; //Clear textarea
     //console.log(text);    
     var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userInfo[0]);
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState === 4 && this.status === 200) {
+        var returnMessage = JSON.parse(xmlhttp.responseText);
+
+    }}
+
+    xmlhttp.open("POST", "/add-message");
+    xmlhttp.setRequestHeader("Content-Type", "application/json;");
+    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}));
+
+
     refreshWallClicked();
     //console.log(retM.message);
 
