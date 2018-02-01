@@ -4,6 +4,8 @@ import os, binascii
 
 app = Flask(__name__)
 
+loggedInUsers = {}
+
 
 @app.before_request
 def before_request():
@@ -11,7 +13,7 @@ def before_request():
 
 
 @app.teardown_request
-def terdown_request(exception):
+def teardown_request(exception):
     database_helper.close_db()
 
 
@@ -40,7 +42,7 @@ def signup_account():
     if not (name and familyName and gender and country and email):
         return jsonify({"success": False, "message": "Not all areas filled."})
 
-    # Insert user into password
+    # Insert user into database
 
     result = database_helper.insert_account(email, password, name, familyName, gender, city, country)
 
@@ -59,9 +61,38 @@ def login():
 
     if result:
         token = binascii.b2a_hex(os.urandom(32))
+        loggedInUsers[token] = email
         return jsonify({"success": True, "message": "Login successful", "data": token})
     else:
-        return jsonify({"success": False, "message": "Wrong e-mail or password", "data": ""})
+        return jsonify({"success": False, "message": "Wrong e-mail or password"})
+
+
+@app.route('/sign-out', methods=['POST'])
+def signout():
+    token = request.json['token']
+    if token in loggedInUsers:
+        del loggedInUsers[token]
+        return jsonify({"success": True, "message": "Successfully signed out."})
+    else:
+        return jsonify({"success": False, "message": "You are not signed in."})
+
+
+@app.route('/fetch-user-token/<token>', methods=['GET'])
+def fetch_user_token(token):
+    email = loggedInUsers.get(token)
+    if email is None:
+        return jsonify({"success": False, "message": "No such token."})
+    else:
+        return fetch_user_email(email)
+
+
+@app.route('/fetch-user-email/<email>', methods=['GET'])
+def fetch_user_email(email):
+    user = database_helper.fetch_account_data(email)
+    if user:
+        return jsonify({"success": True, "message": "Retrieved email successfully.", "data": user})
+    else:
+        return jsonify({"success": False, "message": "No such user"})
 
 
 @app.route('/change-password', methods=['POST'])

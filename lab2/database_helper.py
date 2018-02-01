@@ -45,6 +45,15 @@ def fetch_account(email, password):
     else:
         return False
 
+
+def fetch_account_data(email):
+    user = query_db('SELECT  * FROM accounts WHERE email = ?', [email], one=True)
+    if user is None:
+        return False
+    else:
+        return user
+
+
 def change_password(email, password): #password = newpassword
     try:
         query_db('UPDATE accounts SET password=? WHERE email=?', [password, email])
