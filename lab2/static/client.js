@@ -38,8 +38,19 @@ loginClicked = function(){
 }
 
 logoutClicked = function() {
-     localStorage.removeItem("token");
-     displayView();
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState === 4 && this.status === 200) {
+        var returnMessage = JSON.parse(xmlhttp.responseText);
+        if(returnMessage.success === true){
+            localStorage.removeItem("token");
+            displayView();
+        }
+    }}
+
+    xmlhttp.open("POST", "/sign-out", true);
+    xmlhttp.setRequestHeader("Content-Type", "application/json;");
+    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token")}));
 }
 
 loadPersonalInfo = function(){
