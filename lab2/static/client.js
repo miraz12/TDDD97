@@ -189,23 +189,42 @@ accountPressed = function(){
 
 changePasswordClicked = function(){
     //console.log("changePWPressed");
-    var form = document.getElementById("changePasswordForm");
-    var password = form.elements["Password"].value;
-    var rptPassword = form.elements["RptPassword"].value;
-    var oldPassword = form.elements["oldPassword"].value;
 
-    if(password.value !== rptPassword.value)
-    {
-        //console.log("Error, passwords doesn't match");
-        document.getElementById("changePW-error").innerHTML = "Error, passwords doesn't match";
-        
-    }
-    else{
-        var returnMessage = serverstub.changePassword(localStorage.getItem("token"), oldPassword, password);
-        //console.log(returnMessage);
-        document.getElementById("changePW-error").innerHTML = returnMessage.message; //DETTA ÄR KNAS MEN DET FUNKAR (fel return message)
-        
-    }
+    var xmlhttp = new XMLHttpRequest();
+     xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && this.status === 200) {
+
+            var returnMessage = JSON.parse(xmlhttp.responseText);
+
+            if(returnMessage.success === false)
+            {
+                document.getElementById("singIn-error").innerHTML = returnMessage.message;
+            }
+        }
+     }
+
+    var formData = new FormData( document.getElementById("changePasswordForm"));
+    formData.append("Email", userInfo.email);
+    xmlhttp.open("POST", "/change-password");
+    xmlhttp.send(formData);
+
+    // var form = document.getElementById("changePasswordForm");
+    // var password = form.elements["Password"].value;
+    // var rptPassword = form.elements["RptPassword"].value;
+    // var oldPassword = form.elements["oldPassword"].value;
+    //
+    // if(password.value !== rptPassword.value)
+    // {
+    //     //console.log("Error, passwords doesn't match");
+    //     document.getElementById("changePW-error").innerHTML = "Error, passwords doesn't match";
+    //
+    // }
+    // else{
+    //     var returnMessage = serverstub.changePassword(localStorage.getItem("token"), oldPassword, password);
+    //     //console.log(returnMessage);
+    //     document.getElementById("changePW-error").innerHTML = returnMessage.message; //DETTA ÄR KNAS MEN DET FUNKAR (fel return message)
+    //
+    // }
 }
 
 refreshWallClicked = function(){
