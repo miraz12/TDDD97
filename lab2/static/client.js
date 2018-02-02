@@ -6,11 +6,23 @@ test = function(){
     //console.log("Test");
 }
 
-loginClicked = function(){
+loginClicked = function(emailIn = '', passwordIn = ''){
     //console.log("loginClicked");
-    var form = document.getElementById("loginForm");
-    var username = form.elements["inputEmail"].value;
-    var password = form.elements["inputPassword"].value;
+
+    var password;
+    var username;
+
+    if(emailIn == '' && passwordIn == '')
+    {
+        var form = document.getElementById("loginForm");
+        username = form.elements["inputEmail"].value;
+        password = form.elements["inputPassword"].value;
+    }
+    else
+    {
+        username = emailIn;
+        password = passwordIn;
+    }
 
 
      var xmlhttp = new XMLHttpRequest();
@@ -31,11 +43,15 @@ loginClicked = function(){
                 document.getElementById("singIn-error").innerHTML = returnMessage.message;
             }
         }
-     }
-     var formData = new FormData( document.getElementById("loginForm"));
-     xmlhttp.open("POST", "/sign-in");
-     xmlhttp.send(formData);
+    }
+    var formData = new FormData( document.getElementById("loginForm"));
+    formData.set("inputPassword", password);
+    formData.set("inputEmail", username);
+    xmlhttp.open("POST", "/sign-in");
+    xmlhttp.send(formData);
 }
+
+
 
 logoutClicked = function() {
     var xmlhttp = new XMLHttpRequest();
@@ -130,17 +146,6 @@ signUpClicked = function () {
     }
     else    //Signup
     {
-        var newUser = {
-            "email": email.value,
-            "password": password.value,
-            "firstname": name.value,
-            "familyname": familyname.value,
-            "gender": gender.value,
-            "city": city.value,
-            "country": country.value
-        }
-
-
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function (ev) {
             if (xmlhttp.readyState === 4 && this.status === 200) {
@@ -148,13 +153,7 @@ signUpClicked = function () {
                 document.getElementById("singUp-error").innerHTML = returnMessage.message;
                 if(returnMessage.success === true)
                 {
-                    returnMessage = serverstub.signIn(email, password);
-                    console.log(returnMessage);
-                    if(returnMessage.success === true)
-                    {
-                       localStorage.setItem("token", returnMessage.data);
-                       displayView();
-                    }
+                    loginClicked(email.value, password.value);
                 }
             }
         }
