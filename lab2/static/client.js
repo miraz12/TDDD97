@@ -256,7 +256,7 @@ refreshWallClicked = function(){
                 for(var i = 0; i < posts.length; i++){
                     var tmpDiv = document.createElement("div");
                     tmpDiv.setAttribute("class", "wallPosts");
-                    tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;
+                    tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
                     wallDiv.appendChild(tmpDiv);
                 }
             }
@@ -270,8 +270,6 @@ postClicked = function(){
     //console.log("post on wall clicked");
     var text = document.getElementById("postInput").value;
     document.getElementById("postInput").value = ""; //Clear textarea
-    //console.log(text);    
-    var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userInfo[0]);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -322,9 +320,23 @@ postToUserClicked = function(){
     var text = document.getElementById("postUserInput").value;
     document.getElementById("postUserInput").value = ""; //Clear textarea
     //console.log(text);
-    
     var userEmail = document.getElementById("browseEmailLabel").innerText;
-    var retM = serverstub.postMessage(localStorage.getItem("token"),text ,userEmail);
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState === 4 && this.status === 200) {
+        var returnMessage = JSON.parse(xmlhttp.responseText);
+
+    }}
+
+    xmlhttp.open("POST", "/add-message");
+    xmlhttp.setRequestHeader("Content-Type", "application/json;");
+    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}));
+
+
+    refreshWallClicked();
+    //console.log(retM.message);
+
     refreshUserWallClicked(); //Not clicked but still reused
     //console.log(retM.message);
 }
@@ -347,7 +359,7 @@ refreshUserWallClicked = function(){
             for(var i = 0; i < posts.length; i++){
             var tmpDiv = document.createElement("div");
             tmpDiv.setAttribute("class", "wallPosts");
-            tmpDiv.innerText = posts[i].writer + ": " + posts[i].content;
+            tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
             wallDiv.appendChild(tmpDiv);
         }
         }}
