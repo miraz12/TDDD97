@@ -70,9 +70,9 @@ def add_message(sender, receiver, message):
     except:
         return False
 
-def change_password(email, password): #password = newpassword
+def change_password(email, password, oldPw): #password = newpassword
     try:
-        query_db('UPDATE accounts SET password=? WHERE email=?', [password, email])
+        query_db('UPDATE accounts SET password=? WHERE(email=? AND password=?)', [password, email, oldPw])
         get_db().commit()
         return True
     except:

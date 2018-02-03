@@ -95,21 +95,17 @@ def fetch_user_email(email):
         return jsonify({"success": False, "message": "No such user"})
 
 
-@app.route('/change-password', methods=['POST'])
-def change_password():
-    email = request.form['Email']
-    password = request.form['oldPassword']
-    rptNewPassword = request.form['RptPassword']
+@app.route('/change-password/<token>', methods=['POST'])
+def change_password(token):
+    email = loggedInUsers.get(token)
+
+    if email is None:
+        return jsonify({"success": False, "message": "No such token."})
+
     newPassword = request.form['Password']
-
-    if(newPassword != rptNewPassword):
-        return jsonify({"success": False, "message": "New passwords doesn't match", "data": ""})
-
-    result = database_helper.fetch_account(email, password)
-    if not result:
-        return jsonify({"success": False, "message": "Wrong password", "data": ""})
-
-    result = database_helper.change_password(email, newPassword)
+    oldPw = request.form['oldPassword']
+    result = database_helper.change_password(email, newPassword, oldPw)
+    print(result)
     if result:
         return jsonify({"success": True, "message": "Password successfully changed", "data": ""})
     else:

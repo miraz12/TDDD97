@@ -217,22 +217,19 @@ accountPressed = function(){
 changePasswordClicked = function(){
     //console.log("changePWPressed");
 
+    var token = localStorage.getItem("token");
+
     var xmlhttp = new XMLHttpRequest();
      xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && this.status === 200) {
 
             var returnMessage = JSON.parse(xmlhttp.responseText);
-
-            if(returnMessage.success === false)
-            {
-                document.getElementById("changePW-error").innerHTML = returnMessage.message;
-            }
+            document.getElementById("changePW-error").innerHTML = returnMessage.message;
         }
      }
 
     var formD = new FormData(document.getElementById("changePasswordForm"));
-    formD.append("Email", userInfo[0]);
-    xmlhttp.open("POST", "/change-password");
+    xmlhttp.open("POST", "/change-password/" + token);
     xmlhttp.send(formD);
 
 }
