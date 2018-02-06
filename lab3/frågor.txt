@@ -1,0 +1,12 @@
+1. People that gain access to where passwords are stored can log in as any user. This can be solved by hashing passwords before handling them on the server-side.
+
+2. By using the https protocol which is http over SSL. which is encrypted and more secure.
+
+3. you can use render_template() for showing different html-pages depending on routes.
+
+4. Serverless, small footprint, well-suited for embedded systems and applications.
+
+5.
+
+
+
