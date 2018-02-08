@@ -3,10 +3,12 @@ from gevent.pywsgi import WSGIServer
 from flask import Flask, request, jsonify
 import database_helper
 import os, binascii
+import json
 
 app = Flask(__name__)
 
 loggedInUsers = {}
+clientSockets = {}
 
 
 @app.before_request
@@ -53,13 +55,13 @@ def signup_account():
     else:
         return jsonify({"success": False, "message": "User already exists."})
 
-
 @app.route('/sign-in', methods=['POST'])
 def login():
     email = request.form['inputEmail']
     password = request.form['inputPassword']
 
     result = database_helper.fetch_account(email, password)
+
 
     if result:
         token = binascii.b2a_hex(os.urandom(32))
@@ -72,7 +74,10 @@ def login():
 @app.route('/sign-out', methods=['POST'])
 def signout():
     token = request.json['token']
+    print(loggedInUsers[token])
+
     if token in loggedInUsers:
+        del clientSockets[loggedInUsers[token]]
         del loggedInUsers[token]
         return jsonify({"success": True, "message": "Successfully signed out."})
     else:
@@ -127,7 +132,6 @@ def fetch_messages_token(token):
 def fetch_messages_email(email):
 
     messages = database_helper.fetch_messages_by_email(email)
-
     if messages is None:
         return jsonify({"success": False, "message": "No messages."})
     else:
@@ -144,6 +148,35 @@ def post_message():
 
     return jsonify({"success": True, "message": "Added message."})
 
+@app.route('/api')
+def api():
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        while True:
+            message = ws.receive()
+            try:
+                msg = json.loads(message)
+                if msg['type'] == "login":
+                    print(msg['type'])
+                    email = msg['email']
+                    print("before if")
+                    if email in clientSockets.keys():
+                        print("If")
+                        sendMsg = {}
+                        sendMsg["type"] = "logout"
+                        clientSockets[email].send(json.dumps(sendMsg))
+                        del clientSockets[email]
+                        clientSockets[email] = ws
+                    else:
+                        clientSockets[email] = ws
+                        print("Else")
+                    print msg['email']
+                else:
+                    print("else AKA, not login func")
+            except:
+                print(message)
+
+    return
 
 if __name__ == '__main__':
     app.debug = True

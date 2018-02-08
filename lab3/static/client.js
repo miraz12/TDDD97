@@ -1,9 +1,41 @@
 var welcomeView;
 var profileView;
 var userInfo;
+var webSocket;
 
 test = function(){
     //console.log("Test");
+}
+
+logout = function () {
+    localStorage.removeItem("token");
+    displayView();
+
+}
+
+testWS = function () {
+    webSocket = new WebSocket("ws://localhost:5000/api");
+    console.log("testWS");
+    webSocket.onopen = function () {
+        console.log("ws open");
+    }
+    webSocket.onmessage = function (event) {
+        console.log("message received");
+        console.log(event);
+        console.log(event.data);
+        //var fr = new FileReader();
+        //var text = fr.readAsText(event.data);
+        //console.log(text);
+        var msg = JSON.parse(event.data);
+        if(msg.type == "logout"){
+            console.log("call log out");
+            logout();
+        }
+        console.log(msg);
+    }
+    webSocket.onclose = function () {
+        console.log("ws closed");
+    }
 }
 
 loginClicked = function(emailIn = '', passwordIn = ''){
@@ -94,6 +126,13 @@ displayView = function(){
 
                 document.getElementById("body").innerHTML = profileView.innerHTML;
                 userInfo = returnMessage.data;
+                var msg = {
+                    type : "login",
+                    id : token,
+                    email : userInfo[0]
+
+                }
+                webSocket.send(JSON.stringify(msg));
                 openTab("homeTab"); //Hard code is best code
             }
             else{
@@ -125,6 +164,7 @@ window.onload = function(){
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
     profileView = document.getElementById("profileview");
+    testWS();
     displayView();
 };
 
