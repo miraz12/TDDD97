@@ -1,3 +1,5 @@
+from geventwebsocket.handler import WebSocketHandler
+from gevent.pywsgi import WSGIServer
 from flask import Flask, request, jsonify
 import database_helper
 import os, binascii
@@ -144,5 +146,7 @@ def post_message():
 
 
 if __name__ == '__main__':
+    app.debug = True
+    http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()
     app.run()
-
