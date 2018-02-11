@@ -74,7 +74,7 @@ def login():
 @app.route('/sign-out', methods=['POST'])
 def signout():
     token = request.json['token']
-    print(loggedInUsers[token])
+    #print(loggedInUsers[token])
 
     if token in loggedInUsers:
         del clientSockets[loggedInUsers[token]]
@@ -152,38 +152,30 @@ def post_message():
 def api():
     if request.environ.get('wsgi.websocket'):
         ws = request.environ['wsgi.websocket']
-        print("length of dict is: ")
-        print(len(clientSockets))
-        saveEmail = ""
+        #print("length of dict is: ")
+        #print(len(clientSockets))
         while not ws.closed :
         #while True:
             message = ws.receive()
             try:
                 msg = json.loads(message)
                 if msg['type'] == "login":
-                    print(msg['type'])
+                    #print(msg['type'])
                     email = msg['email']
-                    saveEmail = email
-                    print("before if")
+                    #print("before if")
                     if email in clientSockets.keys():
-                        print("If")
+                        #print("If")
                         sendMsg = {}
                         sendMsg["type"] = "logout"
                         clientSockets[email].send(json.dumps(sendMsg))
                         #del clientSockets[email]
                         clientSockets[email] = ws
-                        #del loggedInUsers[loggedInUsers.keys()[loggedInUsers.values().index(email)]] # log out user by the email we have
                     else:
                         clientSockets[email] = ws
-                        print("Else")
-                    print msg['email']
                 else:
-                    print("else AKA, not login func")
+                    print("Unknown message received")
             except:
                 print(message)
-        #if saveEmail in clientSockets.keys():
-        #    print("Deleting cos closed connection")
-        #    del clientSockets[saveEmail]
 
     return 'OK'
 

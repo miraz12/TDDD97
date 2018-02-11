@@ -10,31 +10,31 @@ test = function(){
 connectWS = function () {
     if(webSocket === null){
         webSocket = new WebSocket("ws://localhost:5000/api");
-        console.log("connectWS");
+        //console.log("connectWS");
 
         webSocket.onmessage = function (event) {
-            console.log("message received");
-            console.log(event);
-            console.log(event.data);
+            //console.log("message received");
+            //console.log(event);
+            //console.log(event.data);
             //var fr = new FileReader();
             //var text = fr.readAsText(event.data);
             //console.log(text);
             var msg = JSON.parse(event.data);
             if(msg.type == "logout"){
-                console.log("logging out");
+                //console.log("logging out");
                 localStorage.removeItem("token");
                 webSocket.close();
                 displayView();
             }
-            console.log(msg);
+            //console.log(msg);
         }
         webSocket.onclose = function () {
-            console.log("ws closed");
+            //console.log("ws closed");
             webSocket = null;
         }
     }
     else if(webSocket.readyState === 3){ //shouldn't be used but you never know
-        console.log("reconnect here");
+        //console.log("reconnect here");
         webSocket = new WebSocket("ws://localhost:5000/api");
 
         var msg = {
@@ -44,14 +44,14 @@ connectWS = function () {
         }
 
         webSocket.onopen = function () {
-            console.log("ws open");
+            //console.log("ws open");
             webSocket.send(JSON.stringify(msg));
         }
     }
 }
 
 loginClicked = function(emailIn = '', passwordIn = ''){
-    console.log("loginClicked");
+    //console.log("loginClicked");
 
     var password;
     var username;
@@ -92,7 +92,7 @@ loginClicked = function(emailIn = '', passwordIn = ''){
 
                     connectWS();
                     webSocket.onopen = function () {
-                        console.log("ws open");
+                        //console.log("ws open");
                         webSocket.send(JSON.stringify(msg));
                     }
                 }
@@ -121,7 +121,7 @@ logoutClicked = function() {
         var returnMessage = JSON.parse(xmlhttp.responseText);
         if(returnMessage.success === true){
             localStorage.removeItem("token");
-            console.log("token removed");
+            //console.log("token removed");
         }
     }}
 
