@@ -165,7 +165,7 @@ def api():
                         sendMsg = {}
                         sendMsg["type"] = "logout"
                         clientSockets[email].send(json.dumps(sendMsg))
-                        del clientSockets[email]
+                        #del clientSockets[email]
                         clientSockets[email] = ws
                     else:
                         clientSockets[email] = ws

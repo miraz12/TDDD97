@@ -1,40 +1,48 @@
 var welcomeView;
 var profileView;
 var userInfo;
-var webSocket;
+var webSocket = null;
 
 test = function(){
     //console.log("Test");
 }
 
-logout = function () {
-    localStorage.removeItem("token");
-    displayView();
-
-}
-
-testWS = function () {
-    webSocket = new WebSocket("ws://localhost:5000/api");
-    console.log("testWS");
-    webSocket.onopen = function () {
-        console.log("ws open");
-    }
-    webSocket.onmessage = function (event) {
-        console.log("message received");
-        console.log(event);
-        console.log(event.data);
-        //var fr = new FileReader();
-        //var text = fr.readAsText(event.data);
-        //console.log(text);
-        var msg = JSON.parse(event.data);
-        if(msg.type == "logout"){
-            console.log("call log out");
-            logout();
+connectWS = function () {
+    if(webSocket === null){
+        webSocket = new WebSocket("ws://localhost:5000/api");
+        console.log("connectWS");
+        webSocket.onopen = function () {
+            console.log("ws open");
         }
-        console.log(msg);
+        webSocket.onmessage = function (event) {
+            console.log("message received");
+            console.log(event);
+            console.log(event.data);
+            //var fr = new FileReader();
+            //var text = fr.readAsText(event.data);
+            //console.log(text);
+            var msg = JSON.parse(event.data);
+            if(msg.type == "logout"){
+                console.log("logging out");
+                localStorage.removeItem("token");
+                displayView();
+            }
+            console.log(msg);
+        }
+        webSocket.onclose = function () {
+            console.log("ws closed");
+        }
     }
-    webSocket.onclose = function () {
-        console.log("ws closed");
+    else if(webSocket.readyState === 3){ //shouldn't be used but you never know
+        console.log("reconnect here");
+
+        var msg = {
+            type : "login",
+            id : localStorage.getItem("token"),
+            email : userInfo[0]
+        }
+        connectWS();
+        webSocket.send(JSON.stringify(msg));
     }
 }
 
@@ -132,7 +140,9 @@ displayView = function(){
                     email : userInfo[0]
 
                 }
+                connectWS();
                 webSocket.send(JSON.stringify(msg));
+
                 openTab("homeTab"); //Hard code is best code
             }
             else{
@@ -164,7 +174,7 @@ window.onload = function(){
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
     profileView = document.getElementById("profileview");
-    testWS();
+    connectWS();
     displayView();
 };
 
