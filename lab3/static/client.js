@@ -11,9 +11,7 @@ connectWS = function () {
     if(webSocket === null){
         webSocket = new WebSocket("ws://localhost:5000/api");
         console.log("connectWS");
-        webSocket.onopen = function () {
-            console.log("ws open");
-        }
+
         webSocket.onmessage = function (event) {
             console.log("message received");
             console.log(event);
@@ -25,43 +23,52 @@ connectWS = function () {
             if(msg.type == "logout"){
                 console.log("logging out");
                 localStorage.removeItem("token");
+                webSocket.close();
                 displayView();
             }
             console.log(msg);
         }
         webSocket.onclose = function () {
             console.log("ws closed");
+            webSocket = null;
         }
     }
     else if(webSocket.readyState === 3){ //shouldn't be used but you never know
         console.log("reconnect here");
+        webSocket = new WebSocket("ws://localhost:5000/api");
 
         var msg = {
             type : "login",
             id : localStorage.getItem("token"),
             email : userInfo[0]
         }
-        connectWS();
-        webSocket.send(JSON.stringify(msg));
+
+        webSocket.onopen = function () {
+            console.log("ws open");
+            webSocket.send(JSON.stringify(msg));
+        }
     }
 }
 
 loginClicked = function(emailIn = '', passwordIn = ''){
-    //console.log("loginClicked");
+    console.log("loginClicked");
 
     var password;
     var username;
+    var tmpBool; //For activation of webSocket
 
     if(emailIn == '' && passwordIn == '')
     {
         var form = document.getElementById("loginForm");
         username = form.elements["inputEmail"].value;
         password = form.elements["inputPassword"].value;
+        tmpBool = true;
     }
     else
     {
         username = emailIn;
         password = passwordIn;
+        tmpBool = false;
     }
 
 
@@ -76,6 +83,20 @@ loginClicked = function(emailIn = '', passwordIn = ''){
             if(returnMessage.success === true)
             {
                 localStorage.setItem("token", token);
+
+                if(tmpBool){
+                    var msg = {
+                    type : "login",
+                    email : username
+                    }
+
+                    connectWS();
+                    webSocket.onopen = function () {
+                        console.log("ws open");
+                        webSocket.send(JSON.stringify(msg));
+                    }
+                }
+
                 displayView();
             }
             else
@@ -100,8 +121,13 @@ logoutClicked = function() {
         var returnMessage = JSON.parse(xmlhttp.responseText);
         if(returnMessage.success === true){
             localStorage.removeItem("token");
+            console.log("token removed");
         }
     }}
+
+    if(webSocket !== null){
+        webSocket.close();
+    }
 
     xmlhttp.open("POST", "/sign-out");
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
@@ -134,14 +160,6 @@ displayView = function(){
 
                 document.getElementById("body").innerHTML = profileView.innerHTML;
                 userInfo = returnMessage.data;
-                var msg = {
-                    type : "login",
-                    id : token,
-                    email : userInfo[0]
-
-                }
-                connectWS();
-                webSocket.send(JSON.stringify(msg));
 
                 openTab("homeTab"); //Hard code is best code
             }
@@ -174,7 +192,7 @@ window.onload = function(){
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
     profileView = document.getElementById("profileview");
-    connectWS();
+    //connectWS(); old place for connecting on socket
     displayView();
 };
 

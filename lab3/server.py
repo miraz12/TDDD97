@@ -152,13 +152,18 @@ def post_message():
 def api():
     if request.environ.get('wsgi.websocket'):
         ws = request.environ['wsgi.websocket']
-        while True:
+        print("length of dict is: ")
+        print(len(clientSockets))
+        saveEmail = ""
+        while not ws.closed :
+        #while True:
             message = ws.receive()
             try:
                 msg = json.loads(message)
                 if msg['type'] == "login":
                     print(msg['type'])
                     email = msg['email']
+                    saveEmail = email
                     print("before if")
                     if email in clientSockets.keys():
                         print("If")
@@ -167,6 +172,7 @@ def api():
                         clientSockets[email].send(json.dumps(sendMsg))
                         #del clientSockets[email]
                         clientSockets[email] = ws
+                        #del loggedInUsers[loggedInUsers.keys()[loggedInUsers.values().index(email)]] # log out user by the email we have
                     else:
                         clientSockets[email] = ws
                         print("Else")
@@ -175,8 +181,11 @@ def api():
                     print("else AKA, not login func")
             except:
                 print(message)
+        #if saveEmail in clientSockets.keys():
+        #    print("Deleting cos closed connection")
+        #    del clientSockets[saveEmail]
 
-    return
+    return 'OK'
 
 if __name__ == '__main__':
     app.debug = True
