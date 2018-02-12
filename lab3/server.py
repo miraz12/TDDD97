@@ -77,7 +77,7 @@ def signout():
     #print(loggedInUsers[token])
 
     if token in loggedInUsers:
-        del clientSockets[loggedInUsers[token]]
+        #del clientSockets[loggedInUsers[token]]
         del loggedInUsers[token]
         return jsonify({"success": True, "message": "Successfully signed out."})
     else:
@@ -168,7 +168,6 @@ def api():
                         sendMsg = {}
                         sendMsg["type"] = "logout"
                         clientSockets[email].send(json.dumps(sendMsg))
-                        #del clientSockets[email]
                         clientSockets[email] = ws
                     else:
                         clientSockets[email] = ws
@@ -176,7 +175,9 @@ def api():
                     print("Unknown message received")
             except:
                 print(message)
-
+        if ws == clientSockets[email]:
+            del clientSockets[email]
+            #print("removing key")
     return 'OK'
 
 if __name__ == '__main__':
