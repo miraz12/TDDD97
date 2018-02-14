@@ -3,71 +3,55 @@ var profileView;
 var userInfo;
 var webSocket = null;
 
-test = function(){
-    //console.log("Test");
-}
-
 connectWS = function () {
     if(webSocket === null){
         webSocket = new WebSocket("ws://localhost:5000/api");
-        //console.log("connectWS");
 
         webSocket.onmessage = function (event) {
-            //console.log("message received");
-            //console.log(event);
-            //console.log(event.data);
-            //var fr = new FileReader();
-            //var text = fr.readAsText(event.data);
-            //console.log(text);
+
             var msg = JSON.parse(event.data);
-            if(msg.type == "logout"){
-                //console.log("logging out");
+            if(msg.type === "logout"){
                 localStorage.removeItem("token");
                 webSocket.close();
                 displayView();
             }
-            //console.log(msg);
-        }
+        };
         webSocket.onclose = function () {
-            //console.log("ws closed");
             webSocket = null;
         }
     }
     else if(webSocket.readyState === 3){ //shouldn't be used but you never know
-        //console.log("reconnect here");
         webSocket = new WebSocket("ws://localhost:5000/api");
 
         var msg = {
             type : "login",
             id : localStorage.getItem("token"),
             email : userInfo[0]
-        }
+        };
 
         webSocket.onopen = function () {
-            //console.log("ws open");
             webSocket.send(JSON.stringify(msg));
         }
     }
-}
+};
 
 xmlHttpPOST = function (address, data, xmlhttp) {
     xmlhttp.open("POST", address);
     xmlhttp.send(data);
-}
+};
 
 xmlHttpGET = function (address, xmlhttp) {
     xmlhttp.open("GET", address);
     xmlhttp.send();
-}
+};
 
-loginClicked = function(emailIn = '', passwordIn = ''){
-    //console.log("loginClicked");
+loginClicked = function(emailIn='', passwordIn = ''){
 
     var password;
     var username;
     var tmpBool; //For activation of webSocket
 
-    if(emailIn == '' && passwordIn == '')
+    if(emailIn === '' && passwordIn === '')
     {
         var form = document.getElementById("loginForm");
         username = form.elements["inputEmail"].value;
@@ -89,7 +73,6 @@ loginClicked = function(emailIn = '', passwordIn = ''){
             var returnMessage = JSON.parse(xmlhttp.responseText);
             var token = returnMessage.data;
 
-
             if(returnMessage.success === true)
             {
                 localStorage.setItem("token", token);
@@ -98,7 +81,7 @@ loginClicked = function(emailIn = '', passwordIn = ''){
                     var msg = {
                     type : "login",
                     email : username
-                    }
+                    };
 
                     connectWS();
                     webSocket.onopen = function () {
@@ -114,13 +97,13 @@ loginClicked = function(emailIn = '', passwordIn = ''){
                 document.getElementById("singIn-error").innerHTML = returnMessage.message;
             }
         }
-    }
+    };
 
     var formData = new FormData( document.getElementById("loginForm"));
     formData.set("inputPassword", password);
     formData.set("inputEmail", username);
     xmlHttpPOST("sign-in", formData, xmlhttp)
-}
+};
 
 
 logoutClicked = function() {
@@ -130,9 +113,8 @@ logoutClicked = function() {
         var returnMessage = JSON.parse(xmlhttp.responseText);
         if(returnMessage.success === true){
             localStorage.removeItem("token");
-            //console.log("token removed");
         }
-    }}
+    }};
 
     if(webSocket !== null){
         webSocket.close();
@@ -142,21 +124,20 @@ logoutClicked = function() {
     xmlHttpPOST("sign-in", JSON.stringify({"token": localStorage.getItem("token")}), xmlhttp);
     displayView();
 
-}
+};
 
 loadPersonalInfo = function(){
-    //console.log(userInfo);
     document.getElementById("emailLabel").innerText = userInfo[0];
     document.getElementById("nameLabel").innerText = userInfo[2];
     document.getElementById("familynameLabel").innerText = userInfo[3];
     document.getElementById("genderLabel").innerText = userInfo[4];
     document.getElementById("cityLabel").innerText = userInfo[5];
     document.getElementById("countryLabel").innerText = userInfo[6];
-}
+};
 
 
 displayView = function(){
- // the code required to display a view
+    //the code required to display a view
     var token = localStorage.getItem("token");
     if(token !== null)
     {
@@ -175,7 +156,8 @@ displayView = function(){
                 localStorage.removeItem("token");
                 document.getElementById("body").innerHTML = welcomeView.innerHTML;
             }
-        }}
+        }};
+
         xmlHttpGET("/fetch-user-token/" + token);
     }
     else
@@ -189,28 +171,17 @@ displayProfileView = function(){
 };
 
 window.onload = function(){
- //code that is executed as the page is loaded.
- //You shall put your own custom code here.
- //window.alert() is not allowed to be used in your implementation.
- //window.alert("Hello TDDD97!");
 
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
     profileView = document.getElementById("profileview");
-    //connectWS(); old place for connecting on socket
     displayView();
 };
 
 
 
 signUpClicked = function () {
-    //console.log("signUpClicked");
     var from = document.getElementById("signupForm");
-    var name = from.elements["Name"];
-    var familyname = from.elements["Family"];
-    var gender = from.elements["Gender"];
-    var city = from.elements["City"];
-    var country = from.elements["Country"];
     var email = from.elements["Email"];
     var password = from.elements["Password"];
     var rptPassword = from.elements["RptPassword"];
@@ -222,7 +193,7 @@ signUpClicked = function () {
     else    //Signup
     {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function (ev) {
+        xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4 && this.status === 200) {
                 var returnMessage = JSON.parse(xmlhttp.responseText);
                 document.getElementById("singUp-error").innerHTML = returnMessage.message;
@@ -231,13 +202,13 @@ signUpClicked = function () {
                     loginClicked(email.value, password.value);
                 }
             }
-        }
+        };
 
         var formData = new FormData( document.getElementById("signupForm"));
         xmlHttpPOST("/sign-up", formData, xmlhttp)
     }
 
-}
+};
 
 openTab = function(tab){
     //Hide all tabs
@@ -266,30 +237,25 @@ openTab = function(tab){
         document.getElementById("accountTab").style.display = "block";
         document.getElementById("accountTabButton").style.backgroundColor = "#ccc";
     }
-}
+};
 
 //Click functions for meny
 homePressed = function(){
-    //console.log("homePressed");
     openTab("homeTab");
 
-}
+};
 
 browsePressed = function(){
-    //console.log("browsePressed");
     openTab("browseTab");
 
-}
+};
 
 accountPressed = function(){
-    //console.log("accountPressed");
     openTab("accountTab");
 
-}
+};
 
 changePasswordClicked = function(){
-    //console.log("changePWPressed");
-
     var token = localStorage.getItem("token");
 
     var xmlhttp = new XMLHttpRequest();
@@ -299,16 +265,13 @@ changePasswordClicked = function(){
             var returnMessage = JSON.parse(xmlhttp.responseText);
             document.getElementById("changePW-error").innerHTML = returnMessage.message;
         }
-     }
+     };
 
-    var formData = new FormData(document.getElementById("changePasswordForm"));
-    xmlHttpPOST("/change-password/" + token, formData, xmlhttp)
-}
+     var formData = new FormData(document.getElementById("changePasswordForm"));
+     xmlHttpPOST("/change-password/" + token, formData, xmlhttp)
+};
 
 refreshWallClicked = function(){
-    //console.log("refresh wall clicked");
-    //var posts = serverstub.getUserMessagesByToken(localStorage.getItem("token")).data;
-    //console.log(posts);
     var token = localStorage.getItem("token");
 
     var xmlhttp = new XMLHttpRequest();
@@ -328,30 +291,28 @@ refreshWallClicked = function(){
                 }
             }
 
-        }}
+        }};
 
         xmlHttpGET("/fetch-messages-token/"+token, xmlhttp)
-}
+};
 
 postClicked = function(){
-    //console.log("post on wall clicked");
     var text = document.getElementById("postInput").value;
     document.getElementById("postInput").value = ""; //Clear textarea
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState === 4 && this.status === 200) {
-        var returnMessage = JSON.parse(xmlhttp.responseText);
+        //var returnMessage = JSON.parse(xmlhttp.responseText);
 
-    }}
+    }};
 
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp)
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp);
 
     refreshWallClicked();
-    //console.log(retM.message);
 
-}
+};
 
 getUserPage = function(){
     var xmlhttp = new XMLHttpRequest();
@@ -363,10 +324,8 @@ getUserPage = function(){
 
             if(returnMessage.success === false){
                     document.getElementById("searchUser-error").innerHTML = returnMessage.message;
-                    //console.log("error here");
             }
             else{
-                //console.log(returnMessage.data);
                 var userData = returnMessage.data;
                 document.getElementById("browseEmailLabel").innerText = userData[0];
                 document.getElementById("browseNameLabel").innerText = userData[2];
@@ -375,36 +334,31 @@ getUserPage = function(){
                 document.getElementById("browseCityLabel").innerText = userData[5];
                 document.getElementById("browseCountryLabel").innerText = userData[6];
             }
-        }}
+        }};
         xmlHttpGET("/fetch-user-email/"+document.getElementById("userSearch").value, xmlhttp)
-}
+};
 
 postToUserClicked = function(){
-    //console.log("post on users wall clicked");
     var text = document.getElementById("postUserInput").value;
     document.getElementById("postUserInput").value = ""; //Clear textarea
-    //console.log(text);
     var userEmail = document.getElementById("browseEmailLabel").innerText;
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState === 4 && this.status === 200) {
-        var returnMessage = JSON.parse(xmlhttp.responseText);
+        //var returnMessage = JSON.parse(xmlhttp.responseText);
 
-    }}
+    }};
 
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp)
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp);
 
     refreshWallClicked();
-    //console.log(retM.message);
 
     refreshUserWallClicked(); //Not clicked but still reused
-    //console.log(retM.message);
-}
+};
 
 refreshUserWallClicked = function(){
-    //console.log("refresh user wall clicked");
     var userEmail = document.getElementById("browseEmailLabel").innerText;
     if(userEmail === "null"){ //Comparing against content of the div tag is maybe not that good (since we shouldn't display "null" in the first place)
         document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output
@@ -415,7 +369,7 @@ refreshUserWallClicked = function(){
         xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4 && this.status === 200) {
             var returnMessage = JSON.parse(xmlhttp.responseText);
-            posts = returnMessage.data;
+            var posts = returnMessage.data;
             var wallDiv = document.getElementById("userPostsDiv");
             wallDiv.innerHTML = "";
             for(var i = 0; i < posts.length; i++){
@@ -424,9 +378,8 @@ refreshUserWallClicked = function(){
             tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
             wallDiv.appendChild(tmpDiv);
         }
-        }}
-
+        }};
 
         xmlHttpGET("/fetch-messages-email/"+userEmail)
     }
-}
+};
