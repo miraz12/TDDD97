@@ -308,7 +308,7 @@ postClicked = function(){
 
     }};
 
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), true);
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp, true);
 
     refreshWallClicked();
 
@@ -350,7 +350,7 @@ postToUserClicked = function(){
 
     }};
 
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp, false);
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp, true);
 
     refreshWallClicked();
 
