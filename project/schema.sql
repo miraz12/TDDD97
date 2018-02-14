@@ -5,7 +5,8 @@ CREATE TABLE if NOT EXISTS accounts(
   familyname text,
   gender text,
   city text,
-  country text
+  country text,
+  salt text
 );
 
 CREATE TABLE IF NOT EXISTS messages(

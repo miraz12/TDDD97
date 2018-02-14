@@ -4,13 +4,18 @@ from geventwebsocket import WebSocketError
 from flask import Flask, request, jsonify
 import database_helper
 import os
+import sys
+import random
 import binascii
 import json
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 loggedInUsers = {}
 clientSockets = {}
+
 
 
 @app.before_request
@@ -26,6 +31,14 @@ def teardown_request(exception):
 @app.route("/")
 def start():
     return app.send_static_file("client.html")
+
+
+def hashPassword(password):
+    return bcrypt.generate_password_hash(password).decode('utf-8')
+
+
+def checkHash(hash, password):
+    return bcrypt.check_password_hash(hash, password)
 
 
 @app.route('/sign-up', methods=['POST'])
@@ -49,8 +62,11 @@ def signup_account():
         return jsonify({"success": False, "message": "Not all areas filled."})
 
     # Insert user into database
+    csprng = random.SystemRandom()
+    salt = str(csprng.randint(0, sys.maxint))
+    hash_pw = hashPassword(password + salt)
 
-    result = database_helper.insert_account(email, password, name, familyName, gender, city, country)
+    result = database_helper.insert_account(email, hash_pw, name, familyName, gender, city, country, salt)
 
     if result:
         return jsonify({"success": True, "message": "Successfully created a new user."})
@@ -65,12 +81,21 @@ def login():
 
     result = database_helper.fetch_account(email, password)
 
+
     if result:
-        token = binascii.b2a_hex(os.urandom(32))
-        loggedInUsers[token] = email
-        return jsonify({"success": True, "message": "Login successful", "data": token})
-    else:
-        return jsonify({"success": False, "message": "Wrong e-mail or password"})
+
+        hash_pw = result[0][0]
+        salt = result[0][2]
+        print salt
+        print hash_pw
+        print checkHash(hash_pw, password+salt)
+
+        if checkHash(hash_pw, password+salt):
+            token = binascii.b2a_hex(os.urandom(32))
+            loggedInUsers[token] = email
+            return jsonify({"success": True, "message": "Login successful", "data": token})
+
+    return jsonify({"success": False, "message": "Wrong e-mail or password"})
 
 
 @app.route('/sign-out', methods=['POST'])

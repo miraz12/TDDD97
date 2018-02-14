@@ -35,8 +35,10 @@ connectWS = function () {
     }
 };
 
-xmlHttpPOST = function (address, data, xmlhttp) {
+xmlHttpPOST = function (address, data, xmlhttp, json = false) {
     xmlhttp.open("POST", address);
+    if (json)
+        xmlhttp.setRequestHeader("Content-Type", "application/json;");
     xmlhttp.send(data);
 };
 
@@ -120,8 +122,7 @@ logoutClicked = function() {
         webSocket.close();
     }
 
-    xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlHttpPOST("sign-in", JSON.stringify({"token": localStorage.getItem("token")}), xmlhttp);
+    xmlHttpPOST("sign-out", JSON.stringify({"token": localStorage.getItem("token")}), xmlhttp, true);
     displayView();
 
 };
@@ -158,7 +159,7 @@ displayView = function(){
             }
         }};
 
-        xmlHttpGET("/fetch-user-token/" + token);
+        xmlHttpGET("/fetch-user-token/" + token, xmlhttp);
     }
     else
     {
@@ -307,8 +308,7 @@ postClicked = function(){
 
     }};
 
-    xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp);
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), true);
 
     refreshWallClicked();
 
@@ -350,8 +350,7 @@ postToUserClicked = function(){
 
     }};
 
-    xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp);
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp, false);
 
     refreshWallClicked();
 
@@ -380,6 +379,6 @@ refreshUserWallClicked = function(){
         }
         }};
 
-        xmlHttpGET("/fetch-messages-email/"+userEmail)
+        xmlHttpGET("/fetch-messages-email/"+userEmail, xmlhttp)
     }
 };

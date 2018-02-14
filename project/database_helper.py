@@ -28,20 +28,21 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 
-def insert_account(email, password, firstname, familyname, gender, city, country):
+def insert_account(email, password, firstname, familyname, gender, city, country, salt):
 
     try:
-        query_db("INSERT INTO accounts VALUES (?,?,?,?,?,?,?)", [email, password, firstname, familyname, gender, city, country])
+        query_db("INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?)", [email, password, firstname, familyname, gender, city, country, salt])
         get_db().commit()
         return True
-    except:
+    except sqlite3.Error as e:
+        print "An error occurred:", e.args[0]
         return False
 
 
 def fetch_account(email, password):
-    user = query_db('SELECT password, email FROM accounts WHERE email=? AND password=?', [email, password])
+    user = query_db('SELECT password, email, salt FROM accounts WHERE email=?', [email])
     if user:
-        return True
+        return user
     else:
         return False
 
