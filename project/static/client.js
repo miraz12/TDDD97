@@ -50,6 +50,16 @@ connectWS = function () {
     }
 }
 
+xmlHttpPOST = function (address, data, xmlhttp) {
+    xmlhttp.open("POST", address);
+    xmlhttp.send(data);
+}
+
+xmlHttpGET = function (address, xmlhttp) {
+    xmlhttp.open("GET", address);
+    xmlhttp.send();
+}
+
 loginClicked = function(emailIn = '', passwordIn = ''){
     //console.log("loginClicked");
 
@@ -105,13 +115,12 @@ loginClicked = function(emailIn = '', passwordIn = ''){
             }
         }
     }
+
     var formData = new FormData( document.getElementById("loginForm"));
     formData.set("inputPassword", password);
     formData.set("inputEmail", username);
-    xmlhttp.open("POST", "/sign-in");
-    xmlhttp.send(formData);
+    xmlHttpPOST("sign-in", formData, xmlhttp)
 }
-
 
 
 logoutClicked = function() {
@@ -129,9 +138,8 @@ logoutClicked = function() {
         webSocket.close();
     }
 
-    xmlhttp.open("POST", "/sign-out");
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token")}));
+    xmlHttpPOST("sign-in", JSON.stringify({"token": localStorage.getItem("token")}), xmlhttp);
     displayView();
 
 }
@@ -168,10 +176,7 @@ displayView = function(){
                 document.getElementById("body").innerHTML = welcomeView.innerHTML;
             }
         }}
-
-        xmlhttp.open("GET", "/fetch-user-token/"+token);
-        xmlhttp.send();
-
+        xmlHttpGET("/fetch-user-token/" + token);
     }
     else
     {
@@ -195,6 +200,8 @@ window.onload = function(){
     //connectWS(); old place for connecting on socket
     displayView();
 };
+
+
 
 signUpClicked = function () {
     //console.log("signUpClicked");
@@ -225,12 +232,10 @@ signUpClicked = function () {
                 }
             }
         }
+
         var formData = new FormData( document.getElementById("signupForm"));
-        xmlhttp.open("POST", "/sign-up");
-        xmlhttp.send(formData);
-
+        xmlHttpPOST("/sign-up", formData, xmlhttp)
     }
-
 
 }
 
@@ -244,7 +249,7 @@ openTab = function(tab){
     document.getElementById("homeTabButton").style.backgroundColor = "inherit";
     document.getElementById("browseTabButton").style.backgroundColor = "inherit";
     document.getElementById("accountTabButton").style.backgroundColor = "inherit";
-    
+
 
     //Activate the right view aswell as the right button
     if(tab === "homeTab"){
@@ -258,7 +263,7 @@ openTab = function(tab){
         document.getElementById("browseTabButton").style.backgroundColor = "#ccc";
     }
     else if(tab === "accountTab"){
-        document.getElementById("accountTab").style.display = "block";     
+        document.getElementById("accountTab").style.display = "block";
         document.getElementById("accountTabButton").style.backgroundColor = "#ccc";
     }
 }
@@ -267,19 +272,19 @@ openTab = function(tab){
 homePressed = function(){
     //console.log("homePressed");
     openTab("homeTab");
-    
+
 }
 
 browsePressed = function(){
     //console.log("browsePressed");
     openTab("browseTab");
-    
+
 }
 
 accountPressed = function(){
-    //console.log("accountPressed");    
+    //console.log("accountPressed");
     openTab("accountTab");
-    
+
 }
 
 changePasswordClicked = function(){
@@ -296,10 +301,8 @@ changePasswordClicked = function(){
         }
      }
 
-    var formD = new FormData(document.getElementById("changePasswordForm"));
-    xmlhttp.open("POST", "/change-password/" + token);
-    xmlhttp.send(formD);
-
+    var formData = new FormData(document.getElementById("changePasswordForm"));
+    xmlHttpPOST("/change-password/" + token, formData, xmlhttp)
 }
 
 refreshWallClicked = function(){
@@ -326,8 +329,8 @@ refreshWallClicked = function(){
             }
 
         }}
-        xmlhttp.open("GET", "/fetch-messages-token/"+token);
-        xmlhttp.send();
+
+        xmlHttpGET("/fetch-messages-token/"+token, xmlhttp)
 }
 
 postClicked = function(){
@@ -342,10 +345,8 @@ postClicked = function(){
 
     }}
 
-    xmlhttp.open("POST", "/add-message");
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}));
-
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp)
 
     refreshWallClicked();
     //console.log(retM.message);
@@ -375,8 +376,7 @@ getUserPage = function(){
                 document.getElementById("browseCountryLabel").innerText = userData[6];
             }
         }}
-        xmlhttp.open("GET", "/fetch-user-email/"+document.getElementById("userSearch").value);
-        xmlhttp.send();
+        xmlHttpGET("/fetch-user-email/"+document.getElementById("userSearch").value, xmlhttp)
 }
 
 postToUserClicked = function(){
@@ -393,10 +393,8 @@ postToUserClicked = function(){
 
     }}
 
-    xmlhttp.open("POST", "/add-message");
     xmlhttp.setRequestHeader("Content-Type", "application/json;");
-    xmlhttp.send(JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}));
-
+    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp)
 
     refreshWallClicked();
     //console.log(retM.message);
@@ -409,7 +407,7 @@ refreshUserWallClicked = function(){
     //console.log("refresh user wall clicked");
     var userEmail = document.getElementById("browseEmailLabel").innerText;
     if(userEmail === "null"){ //Comparing against content of the div tag is maybe not that good (since we shouldn't display "null" in the first place)
-        document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output 
+        document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output
     }
     else{
 
@@ -427,7 +425,8 @@ refreshUserWallClicked = function(){
             wallDiv.appendChild(tmpDiv);
         }
         }}
-        xmlhttp.open("GET", "/fetch-messages-email/"+userEmail);
-        xmlhttp.send();
+
+
+        xmlHttpGET("/fetch-messages-email/"+userEmail)
     }
 }
