@@ -39,7 +39,7 @@ def insert_account(email, password, firstname, familyname, gender, city, country
         return False
 
 
-def fetch_account(email, password):
+def fetch_account(email):
     user = query_db('SELECT password, email, salt FROM accounts WHERE email=?', [email])
     if user:
         return user
@@ -68,13 +68,16 @@ def add_message(sender, receiver, message):
         query_db('INSERT INTO messages VALUES (?, ?, ?)', [sender, receiver, message])
         get_db().commit()
         return True
-    except:
+    except sqlite3.Error as e:
+        print "An error occurred:", e.args[0]
         return False
 
-def change_password(email, password, oldPw): #password = newpassword
+
+def change_password(email, password): #password = newpassword
     try:
-        query_db('UPDATE accounts SET password=? WHERE(email=? AND password=?)', [password, email, oldPw])
+        query_db('UPDATE accounts SET password=? WHERE(email=?)', [password, email])
         get_db().commit()
         return True
-    except:
+    except sqlite3.Error as e:
+        print "An error occurred:", e.args[0]
         return False

@@ -79,16 +79,11 @@ def login():
     email = request.form['inputEmail']
     password = request.form['inputPassword']
 
-    result = database_helper.fetch_account(email, password)
-
+    result = database_helper.fetch_account(email)
 
     if result:
-
         hash_pw = result[0][0]
         salt = result[0][2]
-        print salt
-        print hash_pw
-        print checkHash(hash_pw, password+salt)
 
         if checkHash(hash_pw, password+salt):
             token = binascii.b2a_hex(os.urandom(32))
@@ -136,8 +131,16 @@ def change_password(token):
 
     newPassword = request.form['Password']
     oldPw = request.form['oldPassword']
-    result = database_helper.change_password(email, newPassword, oldPw)
-    print(result)
+
+    result = database_helper.fetch_account(email)
+
+    if result:
+        hash_pw = result[0][0]
+        salt = result[0][2]
+        if checkHash(hash_pw, oldPw + salt):
+            new_hash_pw = hashPassword(newPassword + salt)
+            result = database_helper.change_password(email, new_hash_pw)
+
     if result:
         return jsonify({"success": True, "message": "Password successfully changed", "data": ""})
     else:
@@ -192,8 +195,7 @@ def api():
                         clientSockets[email] = ws
                 else:
                     print("Unknown message received")
-            except WebSocketError as e:
-                repr(e)
+            except:
                 print(message)
         if ws == clientSockets[email]:
             del clientSockets[email]
