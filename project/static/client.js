@@ -36,6 +36,9 @@ connectWS = function () {
 };
 
 xmlHttpPOST = function (address, data, xmlhttp, json = false) {
+
+    var token = localStorage.getItem('token');
+    var hased_token = CryptoJS.SHA256(address + token);
     xmlhttp.open("POST", address);
     if (json)
         xmlhttp.setRequestHeader("Content-Type", "application/json;");
@@ -107,7 +110,6 @@ loginClicked = function(emailIn='', passwordIn = ''){
     xmlHttpPOST("sign-in", formData, xmlhttp)
 };
 
-
 logoutClicked = function() {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -178,8 +180,6 @@ window.onload = function(){
     profileView = document.getElementById("profileview");
     displayView();
 };
-
-
 
 signUpClicked = function () {
     var from = document.getElementById("signupForm");
@@ -268,8 +268,22 @@ changePasswordClicked = function(){
         }
      };
 
-     var formData = new FormData(document.getElementById("changePasswordForm"));
-     xmlHttpPOST("/change-password/" + token, formData, xmlhttp)
+     var from = document.getElementById("changePasswordForm");
+     var oldPass = from.elements['oldPassword'].value;
+     var rptNewPass = from.elements['RptPassword'].value;
+     var newPass = from.elements['Password'].value;
+     if(newPass === rptNewPass)
+     {
+         var hased_token = CryptoJS.SHA256("/change-password/" + token);
+
+         var data = JSON.stringify({"token": localStorage.getItem("token"), "oldPass": oldPass, "newPass": newPass, "email": userInfo[0]});
+         xmlHttpPOST("/change-password/" + hased_token , data, xmlhttp, true)
+     }
+     else
+     {
+         document.getElementById("changePW-error").innerHTML = 'Passwords not matching'
+     }
+
 };
 
 refreshWallClicked = function(){
@@ -294,7 +308,9 @@ refreshWallClicked = function(){
 
         }};
 
-        xmlHttpGET("/fetch-messages-token/"+token, xmlhttp)
+        var hased_token = CryptoJS.SHA256("/fetch-messages-token/" + token);
+        xmlHttpGET("/fetch-messages-token/"+ hased_token + "/" + userInfo[0], xmlhttp)
+
 };
 
 postClicked = function(){
@@ -308,8 +324,10 @@ postClicked = function(){
 
     }};
 
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userInfo[0]}), xmlhttp, true);
+    var hashed_token = CryptoJS.SHA256("/add-message" + localStorage.getItem("token"));
+    var data = JSON.stringify({"token": hashed_token, "message": text, "email": userInfo[0], "senderEmail": userInfo[0]})
 
+    xmlHttpPOST("/add-message", data, xmlhttp, true);
     refreshWallClicked();
 
 };
@@ -350,11 +368,13 @@ postToUserClicked = function(){
 
     }};
 
-    xmlHttpPOST("/add-message", JSON.stringify({"token": localStorage.getItem("token"), "message": text, "email": userEmail}), xmlhttp, true);
+    var hashed_token = CryptoJS.SHA256("/add-message" + localStorage.getItem("token"));
+    var data = JSON.stringify({"token": hashed_token, "message": text, "email": userEmail, "senderEmail": userInfo[0]})
 
+    xmlHttpPOST("/add-message", data, xmlhttp, true);
     refreshWallClicked();
-
     refreshUserWallClicked(); //Not clicked but still reused
+
 };
 
 refreshUserWallClicked = function(){

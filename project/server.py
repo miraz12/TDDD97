@@ -8,14 +8,15 @@ import sys
 import random
 import binascii
 import json
+import hashlib
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
 loggedInUsers = {}
+loggedInUsersE = {}
 clientSockets = {}
-
 
 
 @app.before_request
@@ -39,6 +40,11 @@ def hashPassword(password):
 
 def checkHash(hash, password):
     return bcrypt.check_password_hash(hash, password)
+
+
+def checkToken(data, recivedtoken):
+    hashed_token = hashlib.sha256(data.encode('utf-8')).hexdigest()
+    return hashed_token != recivedtoken
 
 
 @app.route('/sign-up', methods=['POST'])
@@ -88,6 +94,7 @@ def login():
         if checkHash(hash_pw, password+salt):
             token = binascii.b2a_hex(os.urandom(32))
             loggedInUsers[token] = email
+            loggedInUsersE[email] = token
             return jsonify({"success": True, "message": "Login successful", "data": token})
 
     return jsonify({"success": False, "message": "Wrong e-mail or password"})
@@ -106,7 +113,11 @@ def signout():
 
 @app.route('/fetch-user-token/<token>', methods=['GET'])
 def fetch_user_token(token):
+
+
     email = loggedInUsers.get(token)
+
+
     if email is None:
         return jsonify({"success": False, "message": "No such token."})
     else:
@@ -124,13 +135,19 @@ def fetch_user_email(email):
 
 @app.route('/change-password/<token>', methods=['POST'])
 def change_password(token):
-    email = loggedInUsers.get(token)
 
-    if email is None:
-        return jsonify({"success": False, "message": "No such token."})
+    email = request.json["email"]
+    userToken = loggedInUsersE.get(email)
 
-    newPassword = request.form['Password']
-    oldPw = request.form['oldPassword']
+    if userToken is None:
+        return jsonify({"success": False, "message": "No such user."})
+
+    newPassword = request.json['newPass']
+    oldPw = request.json['oldPass']
+
+    data = '/change-password/' + userToken
+    if checkToken(data, token):
+        return jsonify({"success": False, "message": "No such user."})
 
     result = database_helper.fetch_account(email)
 
@@ -142,18 +159,22 @@ def change_password(token):
             result = database_helper.change_password(email, new_hash_pw)
 
     if result:
-        return jsonify({"success": True, "message": "Password successfully changed", "data": ""})
+        return jsonify({"success": True, "message": "Password successfully changed"})
     else:
-        return jsonify({"success": False, "message": "Could not change password", "data": ""}) #TODO: better output
+        return jsonify({"success": False, "message": "Could not change password"})
 
 
-@app.route('/fetch-messages-token/<token>', methods=['GET'])
-def fetch_messages_token(token):
-    email = loggedInUsers.get(token)
-    if email is None:
+@app.route('/fetch-messages-token/<token>/<email>', methods=['GET'])
+def fetch_messages_token(token, email):
+
+    userToken = loggedInUsersE.get(email)
+
+    if userToken is None:
         return jsonify({"success": False, "message": "No such token."})
     else:
-        return fetch_messages_email(email)
+        data = '/change-password/' + userToken
+        if checkToken(data, token):
+            return fetch_messages_email(email)
 
 
 @app.route('/fetch-messages-email/<email>', methods=['GET'])
@@ -171,10 +192,14 @@ def post_message():
     token = request.json['token']
     message = request.json['message']
     reciever = request.json['email']
-    sender = loggedInUsers.get(token)
+    sender = request.json['senderEmail']
     database_helper.add_message(sender, reciever, message)
 
-    return jsonify({"success": True, "message": "Added message."})
+    data = 'add-message' + loggedInUsersE.get(sender)
+    if checkToken(data, token):
+        return jsonify({"success": True, "message": "Added message."})
+    else:
+        return jsonify({"success": False, "message": "Failed to add message."})
 
 
 @app.route('/api')
