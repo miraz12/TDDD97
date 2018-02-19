@@ -38,7 +38,6 @@ connectWS = function () {
 xmlHttpPOST = function (address, data, xmlhttp, json = false) {
 
     var token = localStorage.getItem('token');
-    var hased_token = CryptoJS.SHA256(address + token);
     xmlhttp.open("POST", address);
     if (json)
         xmlhttp.setRequestHeader("Content-Type", "application/json;");

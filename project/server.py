@@ -1,6 +1,5 @@
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pywsgi import WSGIServer
-from geventwebsocket import WebSocketError
 from flask import Flask, request, jsonify
 import database_helper
 import os
