@@ -1,6 +1,5 @@
 import unittest
 from selenium import webdriver
-
 import time
 
 
@@ -41,17 +40,34 @@ class GoogleTestCase(unittest.TestCase):
         time.sleep(1)
         self.assertIn(email, self.browser.page_source)
 
-    def test3Logout(self):
+    def test3WriteOnWall(self):
+        self.test2Login()
+        post_message = 'Test Message!'
+
+        self.browser.find_element_by_id('postInput').send_keys(post_message)
+        self.browser.find_element_by_id('submit_home').click()
+
+        #Should be able to save object and use it here but didnt work?
+        self.browser.find_element_by_id('postInput').clear()
+
+        self.assertIn(post_message, self.browser.page_source)
+
+    def test4SearchUser(self):
+        self.test2Login()
+        self.browser.execute_script('browsePressed()')
+
+        email = 'email@hotmail.com'
+
+        self.browser.find_element_by_id('userSearch').send_keys(email)
+        self.browser.find_element_by_id('userSearchButton').click()
+
+        self.browser.find_element_by_id('userSearch').clear()
+
+        self.assertIn(email, self.browser.page_source)
+
+    def test5Logout(self):
 
         self.test2Login()
-
-        #self.browser.find_element_by_id("homeTab").style.display = "none";
-        #self.browser.find_element_by_id("browseTab").style.display = "none";
-        #self.browser.find_element_by_id("accountTab").style.display = "none";
-
-        #self.browser.find_element_by_id("homeTabButton").style.backgroundColor = "inherit";
-        #self.browser.find_element_by_id("browseTabButton").style.backgroundColor = "inherit";
-        #self.browser.find_element_by_id("accountTabButton").style.backgroundColor = "inherit";
 
         self.browser.execute_script('accountPressed()')
 
