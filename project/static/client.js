@@ -300,6 +300,8 @@ refreshWallClicked = function(){
                 for(var i = 0; i < posts.length; i++){
                     var tmpDiv = document.createElement("div");
                     tmpDiv.setAttribute("class", "wallPosts");
+                    tmpDiv.setAttribute("draggable", "true");
+                    tmpDiv.setAttribute("ondragstart", "drag(event)");
                     tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
                     wallDiv.appendChild(tmpDiv);
                 }
@@ -400,4 +402,22 @@ refreshUserWallClicked = function(){
 
         xmlHttpGET("/fetch-messages-email/"+userEmail, xmlhttp)
     }
+};
+
+allowDrop = function(ev) {
+    ev.preventDefault();
+};
+
+//Gets the innerHTML text of the div that is being dragd
+drag = function (ev) {
+    ev.dataTransfer.setData("text", ev.target.innerHTML);
+};
+
+
+//Takes the the text from the dragd object and copies it into the form
+drop = function (ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    document.getElementById("postInput").value = data;
+
 };

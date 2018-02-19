@@ -109,7 +109,7 @@
 
         <div id="postDiv">
             <form id="postForm" action="javascript:postClicked()">
-                <textarea type="text" id="postInput" class="postInput" value="" placeholder="Make a tweed..." required></textarea>
+                <textarea type="text" id="postInput" class="postInput" value="" placeholder="Make a tweed..." ondrop="drop(event)" ondragover="allowDrop(event)" required></textarea>
                 <input type="submit" value="PostText" id="submit_home">
             </form>
         </div>
