@@ -9,6 +9,7 @@ import binascii
 import json
 import hashlib
 from flask_bcrypt import Bcrypt
+import time
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -205,6 +206,7 @@ def post_message():
 def api():
     if request.environ.get('wsgi.websocket'):
         ws = request.environ['wsgi.websocket']
+        email = "";
         while not ws.closed:
             message = ws.receive()
             try:
@@ -217,6 +219,15 @@ def api():
                         clientSockets[email] = ws
                     else:
                         clientSockets[email] = ws
+                elif msg["type"] == "livedata":
+                    sendMsg = {}
+                    sendMsg["type"] = "livedata"
+                    sendMsg["nrmyposts"] = len(database_helper.fetch_posts_by_email(email))
+                    sendMsg["nrwallposts"] = len(database_helper.fetch_messages_by_email(email))
+                    sendMsg["nronlineusers"] = len(loggedInUsers)
+
+                    #print("livedata message received!")
+                    ws.send(json.dumps(sendMsg))
                 else:
                     print("Unknown message received")
             except:

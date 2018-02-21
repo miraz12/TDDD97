@@ -161,3 +161,8 @@ input[type=submit] {
     width: 50%;
     float: right;
 }
+
+#livedataChart{
+    display: block;
+    resize: none;
+}

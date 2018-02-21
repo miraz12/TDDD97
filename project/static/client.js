@@ -2,6 +2,10 @@ var welcomeView;
 var profileView;
 var userInfo;
 var webSocket = null;
+var intervalVar;
+var chartConfig;
+
+var testTime = 0;
 
 connectWS = function () {
     if(webSocket === null){
@@ -15,9 +19,16 @@ connectWS = function () {
                 webSocket.close();
                 displayView();
             }
+            if(msg.type == "livedata"){
+                //Uppdate view of liveData
+                //console.log("livedatareceived");
+                addLiveData(msg.nronlineusers, msg.nrwallposts, msg.nrmyposts);
+                //console.log(msg);
+            }
         };
         webSocket.onclose = function () {
             webSocket = null;
+            clearInterval(intervalVar);
         }
     }
     else if(webSocket.readyState === 3){ //shouldn't be used but you never know
@@ -35,6 +46,107 @@ connectWS = function () {
     }
 };
 
+getLiveData = function(){
+    connectWS();
+    if(webSocket.readyState === 1){ //Not important if this is missed one time, if socket didn't have time to open we don't send
+        var msg = {
+            type : "livedata",
+        }
+        webSocket.send(JSON.stringify(msg));
+    }
+};
+
+setupChart = function () {
+    ctx = document.getElementById("livedataChart").getContext('2d');
+    chartConfig = {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Online users',
+                data: [],
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderColor: 'rgba(0,255,0,1)',
+            },
+                {
+                label: 'Posts on my wall',
+                data: [],
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderColor: 'rgba(255,0,0,1)',
+            },
+                {
+                label: 'My posts',
+                data: [],
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderColor: 'rgba(0,0,255,1)',
+            }
+            ]
+        },
+        options: {
+                    responsive: true,
+                    title:{
+                        display:true,
+                        text:'Live data representation'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Time'
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            }
+                        }]
+                    }
+                }
+        }
+    window.myLine = new Chart(ctx, chartConfig);
+
+};
+
+addLiveData = function (users, wallPosts, myPosts) {
+    chartConfig.data.labels.push(testTime);
+
+    chartConfig.data.datasets[0].data.push(
+        {
+            x: testTime,
+            y: users
+        }
+    );
+
+    chartConfig.data.datasets[1].data.push(
+        {
+            x: testTime,
+            y: wallPosts
+        }
+    );
+
+    chartConfig.data.datasets[2].data.push(
+        {
+            x: testTime,
+            y: myPosts
+        }
+    );
+    window.myLine.update();
+    testTime += 1;
+};
 xmlHttpPOST = function (address, data, xmlhttp, json = false) {
 
     var token = localStorage.getItem('token');
@@ -123,6 +235,8 @@ logoutClicked = function() {
         webSocket.close();
     }
 
+    clearInterval(intervalVar);
+
     xmlHttpPOST("sign-out", JSON.stringify({"token": localStorage.getItem("token")}), xmlhttp, true);
     displayView();
 
@@ -153,6 +267,7 @@ displayView = function(){
                 userInfo = returnMessage.data;
 
                 openTab("homeTab"); //Hard code is best code
+                setupChart();
             }
             else{
                 localStorage.removeItem("token");
@@ -227,6 +342,7 @@ openTab = function(tab){
         loadPersonalInfo();
         document.getElementById("homeTab").style.display = "block";
         document.getElementById("homeTabButton").style.backgroundColor = "#ccc";
+        intervalVar = setInterval(getLiveData, 1000); //Update every 10seconds //TODO: change after testing
     }
     else if(tab === "browseTab"){
         document.getElementById("browseEmailLabel").innerText = "null";
