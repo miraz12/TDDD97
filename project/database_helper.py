@@ -81,3 +81,10 @@ def change_password(email, password): #password = newpassword
     except sqlite3.Error as e:
         print "An error occurred:", e.args[0]
         return False
+
+def fetch_posts_by_email(email):
+    user = query_db('SELECT  * FROM messages WHERE sender = ?', [email])
+    if user is None:
+        return False
+    else:
+        return user

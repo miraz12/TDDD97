@@ -159,7 +159,7 @@ def api():
             message = ws.receive()
             try:
                 msg = json.loads(message)
-                if msg['type'] == "login":
+                if msg["type"] == "login":
                     #print(msg['type'])
                     email = msg['email']
                     #print("before if")

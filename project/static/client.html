@@ -1,5 +1,6 @@
 <html>
  <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
  <link href="static/client.css" type="text/css" rel="stylesheet">
  <script type="text/view" id="welcomeview">
   <div id="center">
@@ -116,6 +117,7 @@
 
             <button id="refreshWallButton" onclick="refreshWallClicked()">Refresh wall</button>
             <div id="postsDiv"></div>
+            <canvas id="livedataChart" width="400" height="400"></canvas>
     </div>
 
     <div id="browseTab" name="Browse" class="tabcontent">
