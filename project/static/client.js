@@ -5,7 +5,6 @@ var webSocket = null;
 var intervalVar;
 var chartConfig;
 
-var testTime = 0;
 
 connectWS = function () {
     if(webSocket === null){
@@ -22,7 +21,7 @@ connectWS = function () {
             if(msg.type == "livedata"){
                 //Uppdate view of liveData
                 //console.log("livedatareceived");
-                addLiveData(msg.nronlineusers, msg.nrwallposts, msg.nrmyposts);
+                updateLiveData(msg.nronlineusers, msg.nrwallposts, msg.nrmyposts);
                 //console.log(msg);
             }
         };
@@ -48,7 +47,7 @@ connectWS = function () {
 
 getLiveData = function(){
     connectWS();
-    if(webSocket.readyState === 1){ //Not important if this is missed one time, if socket didn't have time to open we don't send
+    if(webSocket.readyState === 1){
         var msg = {
             type : "livedata",
         }
@@ -59,33 +58,24 @@ getLiveData = function(){
 setupChart = function () {
     ctx = document.getElementById("livedataChart").getContext('2d');
     chartConfig = {
-        type: 'line',
+        type: 'bar',
         data: {
-            labels: [],
+            labels: ['Online users', 'Posts on my wall', 'My posts'],
             datasets: [{
-                label: 'Online users',
-                data: [],
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderColor: 'rgba(0,255,0,1)',
-            },
-                {
-                label: 'Posts on my wall',
-                data: [],
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderColor: 'rgba(255,0,0,1)',
-            },
-                {
-                label: 'My posts',
-                data: [],
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderColor: 'rgba(0,0,255,1)',
+                label: "live data",
+                data: [0,0,0],
+                backgroundColor: ['rgba(255,0,0,1)', 'rgba(0,255,0,1)', 'rgba(0,0,255,1)'],
+                borderColor: ['rgba(10,10,10,1)', 'rgba(10,10,10,1)', 'rgba(10,10,10,1)']
             }
             ]
         },
         options: {
                     responsive: true,
+                    legend: {
+                        display: false
+                    },
                     title:{
-                        display:true,
+                        display:false,
                         text:'Live data representation'
                     },
                     tooltips: {
@@ -101,51 +91,32 @@ setupChart = function () {
                             display: true,
                             scaleLabel: {
                                 display: true,
-                                labelString: 'Time'
                             },
-                            ticks: {
-                                beginAtZero: true
-                            }
                         }],
                         yAxes: [{
                             display: true,
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Value'
+                            },
+                            ticks: {
+                                beginAtZero: true
                             }
                         }]
                     }
                 }
         }
     window.myLine = new Chart(ctx, chartConfig);
-
+    getLiveData();
 };
 
-addLiveData = function (users, wallPosts, myPosts) {
-    chartConfig.data.labels.push(testTime);
+updateLiveData = function (users, wallPosts, myPosts) {
 
-    chartConfig.data.datasets[0].data.push(
-        {
-            x: testTime,
-            y: users
-        }
-    );
+    chartConfig.data.datasets[0].data[0] = users;
+    chartConfig.data.datasets[0].data[1] = wallPosts;
+    chartConfig.data.datasets[0].data[2] = myPosts;
 
-    chartConfig.data.datasets[1].data.push(
-        {
-            x: testTime,
-            y: wallPosts
-        }
-    );
-
-    chartConfig.data.datasets[2].data.push(
-        {
-            x: testTime,
-            y: myPosts
-        }
-    );
     window.myLine.update();
-    testTime += 1;
 };
 xmlHttpPOST = function (address, data, xmlhttp, json = false) {
 
@@ -342,7 +313,6 @@ openTab = function(tab){
         loadPersonalInfo();
         document.getElementById("homeTab").style.display = "block";
         document.getElementById("homeTabButton").style.backgroundColor = "#ccc";
-        intervalVar = setInterval(getLiveData, 1000); //Update every 10seconds //TODO: change after testing
     }
     else if(tab === "browseTab"){
         document.getElementById("browseEmailLabel").innerText = "null";

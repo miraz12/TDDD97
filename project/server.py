@@ -18,6 +18,16 @@ loggedInUsers = {}
 loggedInUsersE = {}
 clientSockets = {}
 
+#Send out live data on every socket
+def send_livedata():
+    for email in clientSockets:
+        csocket = clientSockets[email]
+        sendMsg = {}
+        sendMsg["type"] = "livedata"
+        sendMsg["nrmyposts"] = len(database_helper.fetch_posts_by_email(email))
+        sendMsg["nrwallposts"] = len(database_helper.fetch_messages_by_email(email))
+        sendMsg["nronlineusers"] = len(loggedInUsers)
+        csocket.send(json.dumps(sendMsg))
 
 @app.before_request
 def before_request():
@@ -95,6 +105,7 @@ def login():
             token = binascii.b2a_hex(os.urandom(32))
             loggedInUsers[token] = email
             loggedInUsersE[email] = token
+            send_livedata()
             return jsonify({"success": True, "message": "Login successful", "data": token})
 
     return jsonify({"success": False, "message": "Wrong e-mail or password"})
@@ -106,6 +117,7 @@ def signout():
 
     if token in loggedInUsers:
         del loggedInUsers[token]
+        send_livedata()
         return jsonify({"success": True, "message": "Successfully signed out."})
     else:
         return jsonify({"success": False, "message": "You are not signed in."})
@@ -196,6 +208,7 @@ def post_message():
     database_helper.add_message(sender, reciever, message)
 
     data = 'add-message' + loggedInUsersE.get(sender)
+    send_livedata()
     if checkToken(data, token):
         return jsonify({"success": True, "message": "Added message."})
     else:
@@ -225,8 +238,6 @@ def api():
                     sendMsg["nrmyposts"] = len(database_helper.fetch_posts_by_email(email))
                     sendMsg["nrwallposts"] = len(database_helper.fetch_messages_by_email(email))
                     sendMsg["nronlineusers"] = len(loggedInUsers)
-
-                    #print("livedata message received!")
                     ws.send(json.dumps(sendMsg))
                 else:
                     print("Unknown message received")
