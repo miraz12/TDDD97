@@ -40,6 +40,9 @@ def teardown_request(exception):
 
 
 @app.route("/")
+@app.route("/home.html")
+@app.route("/browse.html")
+@app.route("/account.html")
 def start():
     return app.send_static_file("client.html")
 
@@ -243,8 +246,9 @@ def api():
                     print("Unknown message received")
             except:
                 print(message)
-        if ws == clientSockets[email]:
-            del clientSockets[email]
+        if email != "":
+            if ws == clientSockets[email]:
+                del clientSockets[email]
     return 'OK'
 
 

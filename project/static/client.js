@@ -5,6 +5,32 @@ var webSocket = null;
 var intervalVar;
 var chartConfig;
 
+window.onunload = function(){
+    document.cookie = "state=" + history.state.page + "; expires=86400000; path=/";
+    console.log("cookie is: " + getCookie("state"));
+    console.log(history.state.page);
+};
+
+window.onpopstate = function (event) {
+    //console.log(JSON.stringify(event.state));
+    //console.log(event.state.page);
+    openTab(event.state.page, true);
+};
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 connectWS = function () {
     if(webSocket === null){
@@ -47,12 +73,28 @@ connectWS = function () {
 
 getLiveData = function(){
     connectWS();
-    if(webSocket.readyState === 1){
-        var msg = {
-            type : "livedata",
+    var msg = JSON.stringify({type : "livedata",});
+    waitForSocketConnection(function () {
+       webSocket.send(msg);
+    });
+};
+
+waitForSocketConnection = function(callback) {
+    setTimeout(
+        function () {
+            if(webSocket.readyState === 1){
+                //console.log("connection is made");
+                if(callback != null){
+                    callback();
+                }
+                return;
+            }
+            else{
+                //console.log("waiting for connection...");
+                waitForSocketConnection(callback);
+            }
         }
-        webSocket.send(JSON.stringify(msg));
-    }
+        ,5);
 };
 
 setupChart = function () {
@@ -199,6 +241,7 @@ logoutClicked = function() {
         var returnMessage = JSON.parse(xmlhttp.responseText);
         if(returnMessage.success === true){
             localStorage.removeItem("token");
+
         }
     }};
 
@@ -226,6 +269,9 @@ loadPersonalInfo = function(){
 displayView = function(){
     //the code required to display a view
     var token = localStorage.getItem("token");
+    //console.log("Token is" + token);
+    //console.log(getCookie("state"));
+
     if(token !== null)
     {
         var xmlhttp = new XMLHttpRequest();
@@ -237,8 +283,26 @@ displayView = function(){
                 document.getElementById("body").innerHTML = profileView.innerHTML;
                 userInfo = returnMessage.data;
 
-                openTab("homeTab"); //Hard code is best code
-                setupChart();
+                if(getCookie("state") === ""){
+                    openTab("homeTab");
+                    refreshWallClicked();
+                    setupChart();
+                }
+                else{
+                    var msg = {
+                    type : "login",
+                    email : userInfo[0]
+                    };
+
+                    connectWS();
+                    webSocket.onopen = function () {
+                        //console.log("ws open");
+                        webSocket.send(JSON.stringify(msg));
+                    }
+                    openTab(getCookie("state"));
+                    refreshWallClicked();
+                    setupChart();
+                }
             }
             else{
                 localStorage.removeItem("token");
@@ -251,6 +315,7 @@ displayView = function(){
     else
     {
         document.getElementById("body").innerHTML = welcomeView.innerHTML;
+        document.cookie = "";
     }
 };
 
@@ -259,7 +324,6 @@ displayProfileView = function(){
 };
 
 window.onload = function(){
-
     //Setup variables
     welcomeView = document.getElementById("welcomeview");
     profileView = document.getElementById("profileview");
@@ -296,8 +360,9 @@ signUpClicked = function () {
 
 };
 
-openTab = function(tab){
+openTab = function(tab, auto = false){
     //Hide all tabs
+    //console.log(history.state);
     document.getElementById("homeTab").style.display = "none";
     document.getElementById("browseTab").style.display = "none";
     document.getElementById("accountTab").style.display = "none";
@@ -310,16 +375,27 @@ openTab = function(tab){
 
     //Activate the right view aswell as the right button
     if(tab === "homeTab"){
+        if(!auto){
+            history.pushState({page: "homeTab"}, "", "home.html")
+        }
         loadPersonalInfo();
         document.getElementById("homeTab").style.display = "block";
         document.getElementById("homeTabButton").style.backgroundColor = "#ccc";
+        getLiveData();
+
     }
     else if(tab === "browseTab"){
+        if(!auto) {
+            history.pushState({page: "browseTab"}, "", "browse.html");
+        }
         document.getElementById("browseEmailLabel").innerText = "null";
         document.getElementById("browseTab").style.display = "block";
         document.getElementById("browseTabButton").style.backgroundColor = "#ccc";
     }
     else if(tab === "accountTab"){
+        if(!auto) {
+            history.pushState({page: "accountTab"}, "", "account.html");
+        }
         document.getElementById("accountTab").style.display = "block";
         document.getElementById("accountTabButton").style.backgroundColor = "#ccc";
     }
@@ -389,7 +465,7 @@ refreshWallClicked = function(){
                     tmpDiv.setAttribute("draggable", "true");
                     tmpDiv.setAttribute("ondragstart", "drag(event)");
                     tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
-                    wallDiv.appendChild(tmpDiv);
+                    wallDiv.prepend(tmpDiv);
                 }
             }
 
@@ -438,9 +514,10 @@ getUserPage = function(){
                 document.getElementById("browseGenderLabel").innerText = userData[4];
                 document.getElementById("browseCityLabel").innerText = userData[5];
                 document.getElementById("browseCountryLabel").innerText = userData[6];
+                refreshUserWallClicked();
             }
         }};
-        xmlHttpGET("/fetch-user-email/"+document.getElementById("userSearch").value, xmlhttp)
+        xmlHttpGET("/fetch-user-email/"+document.getElementById("userSearch").value, xmlhttp);
 };
 
 postToUserClicked = function(){
@@ -482,7 +559,7 @@ refreshUserWallClicked = function(){
             var tmpDiv = document.createElement("div");
             tmpDiv.setAttribute("class", "wallPosts");
             tmpDiv.innerText = posts[i][0] + ": " + posts[i][2];
-            wallDiv.appendChild(tmpDiv);
+            wallDiv.prepend(tmpDiv);
         }
         }};
 
