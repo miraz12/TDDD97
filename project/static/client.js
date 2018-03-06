@@ -160,6 +160,8 @@ updateLiveData = function (users, wallPosts, myPosts) {
 
     window.myLine.update();
 };
+
+//post request
 xmlHttpPOST = function (address, data, xmlhttp, json = false) {
 
     var token = localStorage.getItem('token');
@@ -169,6 +171,7 @@ xmlHttpPOST = function (address, data, xmlhttp, json = false) {
     xmlhttp.send(data);
 };
 
+//get request
 xmlHttpGET = function (address, xmlhttp) {
     xmlhttp.open("GET", address);
     xmlhttp.send();
@@ -360,6 +363,7 @@ signUpClicked = function () {
 
 };
 
+
 openTab = function(tab, auto = false){
     //Hide all tabs
     //console.log(history.state);
@@ -401,7 +405,7 @@ openTab = function(tab, auto = false){
     }
 };
 
-//Click functions for meny
+//Click functions for menu
 homePressed = function(){
     openTab("homeTab");
 
@@ -417,6 +421,7 @@ accountPressed = function(){
 
 };
 
+//Changes password
 changePasswordClicked = function(){
     var token = localStorage.getItem("token");
 
@@ -447,6 +452,7 @@ changePasswordClicked = function(){
 
 };
 
+//Refreshes own wall
 refreshWallClicked = function(){
     var token = localStorage.getItem("token");
 
@@ -476,6 +482,7 @@ refreshWallClicked = function(){
 
 };
 
+//Posts message to selected users wall
 postClicked = function(){
     var text = document.getElementById("postInput").value;
     document.getElementById("postInput").value = ""; //Clear textarea
@@ -495,6 +502,7 @@ postClicked = function(){
 
 };
 
+//Gets user data
 getUserPage = function(){
     var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
@@ -520,6 +528,7 @@ getUserPage = function(){
         xmlHttpGET("/fetch-user-email/"+document.getElementById("userSearch").value, xmlhttp);
 };
 
+//Post to selected user
 postToUserClicked = function(){
     var text = document.getElementById("postUserInput").value;
     document.getElementById("postUserInput").value = ""; //Clear textarea
@@ -541,10 +550,12 @@ postToUserClicked = function(){
 
 };
 
+//Refreshes the wall of selected user
 refreshUserWallClicked = function(){
     var userEmail = document.getElementById("browseEmailLabel").innerText;
-    if(userEmail === "null"){ //Comparing against content of the div tag is maybe not that good (since we shouldn't display "null" in the first place)
-        document.getElementById("searchUser-error").innerHTML = "No selected user"; //Maybe don't have any output
+    //Comparing against content of the div tag is maybe not that good (since we shouldn't display "null" in the first place)
+    if(userEmail === "null"){
+        document.getElementById("searchUser-error").innerHTML = "No selected user";
     }
     else{
 

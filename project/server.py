@@ -51,10 +51,12 @@ def hashPassword(password):
     return bcrypt.generate_password_hash(password).decode('utf-8')
 
 
+#check if recived hash is same as stored password
 def checkHash(hash, password):
     return bcrypt.check_password_hash(hash, password)
 
 
+#check if the hashed data matches the recived hashed token
 def checkToken(data, recivedtoken):
     hashed_token = hashlib.sha256(data.encode('utf-8')).hexdigest()
     return hashed_token != recivedtoken
@@ -80,7 +82,7 @@ def signup_account():
     if not (name and familyName and gender and country and email):
         return jsonify({"success": False, "message": "Not all areas filled."})
 
-    # Insert user into database
+    # Insert user into database, hash and salt password
     csprng = random.SystemRandom()
     salt = str(csprng.randint(0, sys.maxint))
     hash_pw = hashPassword(password + salt)
@@ -166,6 +168,7 @@ def change_password(token):
 
     result = database_helper.fetch_account(email)
 
+    #Hash and salt new password
     if result:
         hash_pw = result[0][0]
         salt = result[0][2]
