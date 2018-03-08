@@ -6,9 +6,9 @@ var intervalVar;
 var chartConfig;
 
 window.onunload = function(){
-    document.cookie = "state=" + history.state.page + "; expires=86400000; path=/";
-    console.log("cookie is: " + getCookie("state"));
-    console.log(history.state.page);
+    document.cookie = "state=" + history.state.page + "; expires=86400000; path=/"; //Save state as cookie
+    //console.log("cookie is: " + getCookie("state"));
+    //console.log(history.state.page);
 };
 
 window.onpopstate = function (event) {
@@ -16,6 +16,7 @@ window.onpopstate = function (event) {
     //console.log(event.state.page);
     openTab(event.state.page, true);
 };
+
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -71,6 +72,7 @@ connectWS = function () {
     }
 };
 
+//Only used when setting up for the first time, otherwhise server decides when to update
 getLiveData = function(){
     connectWS();
     var msg = JSON.stringify({type : "livedata",});

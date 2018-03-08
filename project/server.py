@@ -18,7 +18,7 @@ loggedInUsers = {}
 loggedInUsersE = {}
 clientSockets = {}
 
-#Send out live data on every socket
+#Send out live data on every socket, called in events that affects data
 def send_livedata():
     for email in clientSockets:
         csocket = clientSockets[email]
@@ -221,7 +221,7 @@ def post_message():
     else:
         return jsonify({"success": False, "message": "Failed to add message."})
 
-
+#Handle websocket connections
 @app.route('/api')
 def api():
     if request.environ.get('wsgi.websocket'):
@@ -233,13 +233,13 @@ def api():
                 msg = json.loads(message)
                 if msg['type'] == "login":
                     email = msg['email']
-                    if email in clientSockets.keys():
-                        sendMsg = {"type": "logout"}
+                    if email in clientSockets.keys(): #If the user is already logged in somewhere
+                        sendMsg = {"type": "logout"} #Tell theold client to log out
                         clientSockets[email].send(json.dumps(sendMsg))
                         clientSockets[email] = ws
                     else:
                         clientSockets[email] = ws
-                elif msg["type"] == "livedata":
+                elif msg["type"] == "livedata": #Only used as first update of the live data
                     sendMsg = {}
                     sendMsg["type"] = "livedata"
                     sendMsg["nrmyposts"] = len(database_helper.fetch_posts_by_email(email))
@@ -250,7 +250,7 @@ def api():
                     print("Unknown message received")
             except:
                 print(message)
-        if email != "":
+        if email != "": #Remove socket from dictionary when socket connection is closed
             if ws == clientSockets[email]:
                 del clientSockets[email]
     return 'OK'
