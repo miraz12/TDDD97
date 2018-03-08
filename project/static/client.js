@@ -440,9 +440,9 @@ changePasswordClicked = function(){
      var newPass = from.elements['Password'].value;
      if(newPass === rptNewPass)
      {
+         //Hash token
          var hased_token = CryptoJS.SHA256("/change-password/" + token);
-
-         var data = JSON.stringify({"token": localStorage.getItem("token"), "oldPass": oldPass, "newPass": newPass, "email": userInfo[0]});
+         var data = JSON.stringify({"oldPass": oldPass, "newPass": newPass, "email": userInfo[0]});
          xmlHttpPOST("/change-password/" + hased_token , data, xmlhttp, true)
      }
      else
@@ -476,7 +476,7 @@ refreshWallClicked = function(){
             }
 
         }};
-
+         //Hash token
         var hased_token = CryptoJS.SHA256("/fetch-messages-token/" + token);
         xmlHttpGET("/fetch-messages-token/"+ hased_token + "/" + userInfo[0], xmlhttp)
 
@@ -494,6 +494,7 @@ postClicked = function(){
 
     }};
 
+    //Hash token
     var hashed_token = CryptoJS.SHA256("/add-message" + localStorage.getItem("token"));
     var data = JSON.stringify({"token": hashed_token, "message": text, "email": userInfo[0], "senderEmail": userInfo[0]})
 
@@ -541,6 +542,7 @@ postToUserClicked = function(){
 
     }};
 
+    //Hash token
     var hashed_token = CryptoJS.SHA256("/add-message" + localStorage.getItem("token"));
     var data = JSON.stringify({"token": hashed_token, "message": text, "email": userEmail, "senderEmail": userInfo[0]})
 

@@ -95,6 +95,7 @@ def signup_account():
         return jsonify({"success": False, "message": "User already exists."})
 
 
+# Adds user to the list of logged in users and generates a random token to send back
 @app.route('/sign-in', methods=['POST'])
 def login():
     email = request.form['inputEmail']
@@ -116,6 +117,7 @@ def login():
     return jsonify({"success": False, "message": "Wrong e-mail or password"})
 
 
+# Deletes users token from logged in users
 @app.route('/sign-out', methods=['POST'])
 def signout():
     token = request.json['token']
@@ -131,9 +133,7 @@ def signout():
 @app.route('/fetch-user-token/<token>', methods=['GET'])
 def fetch_user_token(token):
 
-
     email = loggedInUsers.get(token)
-
 
     if email is None:
         return jsonify({"success": False, "message": "No such token."})
@@ -150,6 +150,7 @@ def fetch_user_email(email):
         return jsonify({"success": False, "message": "No such user"})
 
 
+# Changes stored password, hash + salt new password before storing it
 @app.route('/change-password/<token>', methods=['POST'])
 def change_password(token):
 
@@ -168,7 +169,7 @@ def change_password(token):
 
     result = database_helper.fetch_account(email)
 
-    #Hash and salt new password
+    # Hash and salt new password
     if result:
         hash_pw = result[0][0]
         salt = result[0][2]

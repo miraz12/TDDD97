@@ -27,7 +27,6 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-
 def insert_account(email, password, firstname, familyname, gender, city, country, salt):
 
     try:
@@ -81,6 +80,7 @@ def change_password(email, password): #password = newpassword
     except sqlite3.Error as e:
         print "An error occurred:", e.args[0]
         return False
+
 
 def fetch_posts_by_email(email):
     user = query_db('SELECT  * FROM messages WHERE sender = ?', [email])
